@@ -1,7 +1,4 @@
 <script lang="ts">
-    function setHeader() {
-        document.cookie = 'token=test'
-    }
 </script>
 
 <main>
@@ -9,7 +6,7 @@
         <h2>Anmeldung</h2>
         <input type="text" placeholder="Benutzername">
         <input type="password" placeholder="Passwort">
-        <button on:click={setHeader}>Anmelden</button>
+        <button>Anmelden</button>
     </div>
     <p>Passwort vergessen? <a href="/forgot">Passwort vergessen</a></p>
     <p>Kein Account? <a href="/register">Registrieren</a></p>
