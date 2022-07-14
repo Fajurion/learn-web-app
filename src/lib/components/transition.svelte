@@ -5,8 +5,8 @@
   
   {#key url}
   <div
-      in:fly="{{ duration: 250, delay: 300 }}"
-      out:fly="{{duration: 250, delay: 1}}" >
+      in:fly="{{ duration: 250, delay: 300  }}"
+      out:fly="{{ duration: 250 }}" >
       <slot/>
     </div>
   {/key}

@@ -1,7 +1,8 @@
 <script context="module" lang="ts">
+import Notification from "$lib/components/notification.svelte";
 import type { Load } from "@sveltejs/kit";
 
-    export const load: Load = (session: any) => {
+    export const load: Load = ({session}) => {
 
         if(session.user) {
             return {
@@ -17,6 +18,8 @@ import type { Load } from "@sveltejs/kit";
 <div class="main">
     <slot />
 </div> 
+
+<Notification />
 
 <style lang="scss">
     .main {
