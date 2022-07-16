@@ -1,4 +1,4 @@
 <script lang="ts">
 </script>
 
-<a href="/app/topic">Topic</a>
+<h2>FaJurion Learn Web Demo</h2>

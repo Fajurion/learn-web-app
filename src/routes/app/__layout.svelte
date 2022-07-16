@@ -3,6 +3,7 @@ import Sidebar from "$lib/sidebar/sidebar.svelte";
 import Navigation from "$lib/nav/navigation.svelte";
 import type { Load } from "@sveltejs/kit"; 
 import Notification from "$lib/components/notification.svelte";
+import Postbar from "$lib/nav/postbar.svelte";
 
     export const load: Load = ({session}) => {
     
@@ -23,7 +24,7 @@ import Notification from "$lib/components/notification.svelte";
     <Navigation />
     <div class="panel">
         <Sidebar />
-
+        
         <div class="main-panel">
             <slot />
         </div>
@@ -36,18 +37,22 @@ import Notification from "$lib/components/notification.svelte";
         height: 100vh;
         background-color: var(--background-color);
         color: var(--text-color);
+        overflow: hidden;
     }
-
+    
     .panel {
         width: 100%;
         display: flex;
+        overflow: hidden;
     }
 
     .main-panel {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
         display: flex;
         justify-content: center;
+        flex-direction: column;
         align-items: center;
-        width: 100%;
-        max-width: 1500px;
     }
 </style>

@@ -2,9 +2,8 @@ import { writable } from "svelte/store";
 import { getToken, basePath } from "$lib/configuration"
 import { showNotification } from "$lib/components/notificationStore";
 
-export let currentTopic = writable(0)
-export let requesting = writable(false)
-
+export let currentTopic = writable({})
+export let requesting = writable(true)
 
 export let topicList = writable([])
 export let path = ''
@@ -14,6 +13,7 @@ export let map = new Map<number, []>()
 export let parentMap = new Map<number, number>()
 
 export async function loadNewTopic(parent: boolean, topic: number) {
+    onRequest()
 
     let topicToRq = topic
 
@@ -23,26 +23,31 @@ export async function loadNewTopic(parent: boolean, topic: number) {
             topicToRq = parentMap.get(topic) || 0
         } else {
 
-            const res = await fetch(basePath + '/api/topic/get', {
-                method: 'post',
-                headers: {
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify({
-                    token: getToken(),
-                    topic: topic
+            try {
+                const res = await fetch(basePath + '/api/topic/get', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: getToken(),
+                        topic: topic
+                    })
                 })
-            })
-            const json = await res.json()
-            parentMap.set(json.topic.id, json.topic.parent)
-            topicToRq = json.topic.parent
+    
+                const json = await res.json()
+                parentMap.set(json.topic.id, json.topic.parent)
+                topicToRq = json.topic.parent
+                currentTopic.set(json.topic)
+                
+            } catch (error) {}
         }
     }
 
     if(map.has(topicToRq)) {
-        console.log('cache')
         topicList.set(map.get(topicToRq) || [])
-    } else requesting.set(true)
+        stopRequest()
+    }
 
     fetch(basePath + '/api/topic/list', {
         method: 'post',
@@ -54,7 +59,7 @@ export async function loadNewTopic(parent: boolean, topic: number) {
             topic: topicToRq
         })
     }).then(res => {
-        requesting.set(false)
+        stopRequest()
         
         if(res.ok) {
             return res.json()
@@ -88,14 +93,14 @@ export async function loadNewTopic(parent: boolean, topic: number) {
 
     }).catch(e => {
         showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 5000)
-        requesting.set(false)
+        stopRequest()
     })
 
 }
 
 export function createTopic(name: string, parent: number) {
+    onRequest()
 
-    requesting.set(true)
     fetch(basePath + '/api/topic/create', {
         method: 'post',
         headers: {
@@ -107,8 +112,7 @@ export function createTopic(name: string, parent: number) {
             parent: parent
         })
     }).then(res => {
-        requesting.set(false)
-        console.log(res)
+        stopRequest()
         
         if(res.ok) {
             return res.json()
@@ -154,7 +158,7 @@ export function createTopic(name: string, parent: number) {
 
     }).catch(e => {
         showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 5000)
-        requesting.set(false)
+        stopRequest()
     })
 
 }
@@ -164,4 +168,12 @@ export function test() {
     setTimeout(() => {
         requesting.set(false)
     }, 2000);
+}
+
+function onRequest() {
+    requesting.set(true)
+}
+
+function stopRequest() {
+    requesting.set(false)
 }

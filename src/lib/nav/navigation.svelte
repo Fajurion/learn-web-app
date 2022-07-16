@@ -1,17 +1,26 @@
-<script>
+<script lang="ts">
+import { goto } from "$app/navigation";
+
+
+    function returnToStart() {
+        goto('/app')
+    }
 </script>
+
+<div class="account">
+    
+</div>
 
 <div class="nav">
 
-    <div class="title">
+    <div on:click={returnToStart} class="title">
         <span class="material-icons">menu</span>
         <h2>Learn</h2>
     </div>
 
     <div class="navigation">
-        <span class="material-icons">mail</span>
+        <span class="material-icons">notifications</span>
         <span class="material-icons">account_circle</span>
-        <span class="material-icons">settings</span>
     </div>
 </div>
 
@@ -43,11 +52,26 @@
         }
 
         .navigation {
-            padding: 0.5em;
+            padding: 0em 0.6em;
             display: flex;
             align-items: center;
-            gap: 0.5em;
+            gap: 0.1em;
             justify-content: center;
+
+            span {
+                border-radius: 1em;
+                padding: 0.2em;
+                cursor: pointer;
+                transition: 250ms ease;
+
+                &:hover {
+                    color: var(--highlight-color);
+                }
+            }
+
+            .selected {
+                background-color: var(--hover-color);
+            }
         }
     }
 </style>

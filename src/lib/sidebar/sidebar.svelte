@@ -1,11 +1,30 @@
 <script lang="ts">
-import { loadNewTopic, topicList, createTopic, requesting, path } from "./sidebarStore";
-import { fly, slide, scale } from "svelte/transition"
+import { loadNewTopic, topicList, createTopic, requesting, currentTopic } from "$lib/sidebar/topics";
+import { fly, scale } from "svelte/transition"
+import { goto } from '$app/navigation';
+import { page } from '$app/stores'
+import { onMount } from "svelte";
+import { loadPosts } from "$lib/posts/posts";
 
     let topicName: string = ''
     let expandAdd = false
     let topicID = 0
     let addChild = false
+
+    let childHovered = false
+
+    onMount(() => {
+
+        if($page.params.topicID) {
+
+            if (!parseInt($page.params.topicID)) {
+                refresh()
+                return
+            }
+
+            loadNewTopic(true, parseInt($page.params.topicID))
+        } else refresh()
+    })
 
     function refresh() {
         loadNewTopic(false, 0)
@@ -26,8 +45,20 @@ import { fly, slide, scale } from "svelte/transition"
     }
 
     function loadChildTopic(id: number, parent: boolean) {
-        console.log(id)
         loadNewTopic(parent, id)
+    }
+
+    function clickTopic(id: number) {
+        if(childHovered) return
+        goto('/app/topic/' + id)
+
+        $topicList.forEach(element => {
+            if(element.id == id) {
+                currentTopic.set(element)
+            }
+        })
+
+        loadPosts(id, 0)
     }
 
 </script>
@@ -53,27 +84,31 @@ import { fly, slide, scale } from "svelte/transition"
         {/if}
 
     </div>
-    {/if}
 
-    <div style="margin-top: 5px;" class="toolbar">
+    {:else}
+
+    <div in:scale style="margin-top: 5px;" class="toolbar">
         {#if $topicList[0] && $topicList[0].parent != 0}
-            <span on:click={() => loadChildTopic($topicList[0].parent, true)} class="material-icons">arrow_back</span>
+            <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => loadChildTopic($topicList[0].parent, true)} class="material-icons">arrow_back</span>
         {/if}
         <span on:click={() => refresh()} class="material-icons">home</span>
         <span on:click={() => loadChildTopic($topicList[0].parent, false)} class="material-icons">refresh</span>
         {#if $topicList[0]}
-            <span on:click={() => addChildTopic($topicList[0].parent)} class="material-icons">add</span>
+            <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => addChildTopic($topicList[0].parent)} class="material-icons">add</span>
         {/if}
     </div>
+    {/if}
     
     {#each $topicList as topic}
-    <div class="topic">
+    <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}"
+     on:click={() => clickTopic(topic.id)} in:fly={{duration: 250}} out:fly={{duration: 250}}>
         <p><span class="material-icons">feed</span>{topic.name}</p>
 
-        <div class="toolbar">
+        <div on:mouseenter={() => childHovered = true} on:mouseleave={() => childHovered = false} class="toolbar">
             {#if topic.category}
-            <span on:click={() => loadChildTopic(topic.id, false)} class="material-icons">arrow_forward_ios</span>
+            <span style="transform: rotate(180deg);" on:click={() => loadChildTopic(topic.id, false)} class="material-icons">arrow_back</span>
             {:else}
+            <span class="material-icons">delete</span>
             <span on:click={() => addChildTopic(topic.id)} class="material-icons">add</span>
             {/if}
         </div>
@@ -103,7 +138,15 @@ import { fly, slide, scale } from "svelte/transition"
         max-width: 380px;
         height: calc(100vh - 3.8em);
         background-color: var(--menu-color);
+        overflow-y: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
+
+    .sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
 
     .no-topics {
         position: absolute;
@@ -134,11 +177,9 @@ import { fly, slide, scale } from "svelte/transition"
             border-radius: 1em;
             transition: 250ms ease;
             cursor: pointer;
-            transform: scale(1);
 
             &:hover {
                 color: var(--highlight-color);
-                transform: scale(1.15);
             }
         }
     }
@@ -203,7 +244,7 @@ import { fly, slide, scale } from "svelte/transition"
         align-items: center;
 
         &:hover {
-            background-color: var(--background-color);
+            background-color: var(--hover-color);
         }
 
         p {
@@ -214,6 +255,14 @@ import { fly, slide, scale } from "svelte/transition"
             span {
                 color: var(--highlight-color);
             }
+        }
+    }
+
+    .selected {
+        background-color: var(--selected-color);
+
+        &:hover {
+            background-color: var(--selected-color);
         }
     }
 
