@@ -20,6 +20,7 @@ import { goto } from "$app/navigation";
 
     <div class="navigation">
         <span class="material-icons">notifications</span>
+        <span class="material-icons">image</span>
         <span class="material-icons">account_circle</span>
     </div>
 </div>

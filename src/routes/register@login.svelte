@@ -43,7 +43,7 @@ import { basePath } from "$lib/configuration";
             return
         }
 
-        await fetch(basePath + 'api/account/register', {
+        await fetch(basePath + '/api/account/register', {
             method: 'post',
             headers: {
                 'Content-Type':'application/json'
@@ -56,6 +56,8 @@ import { basePath } from "$lib/configuration";
             })
         }).then(res => {
 
+            console.log(res)
+
             if(res.ok) {
                 return res.json()
             } else {
@@ -64,11 +66,13 @@ import { basePath } from "$lib/configuration";
             }
 
         }).then(json => {
+            console.log(json)
 
             if(json.success) {
                 showNotification('Du wurdest registriert!', 'green', 2000)
 
-                
+                document.cookie = "token=" + json.data + "; SameSite=Strict; Secure"
+                location.assign('/app')
 
                 return;
             }

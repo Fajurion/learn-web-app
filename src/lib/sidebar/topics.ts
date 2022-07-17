@@ -153,6 +153,10 @@ export function createTopic(name: string, parent: number) {
             case "name_too_short":
                 showNotification('Die Länge des Namens darf nicht kleiner als 3 sein.', 'red', 2000)
                 break;
+            
+            case "no_permission":
+                showNotification('Du hast nicht genügend Rechte um ein Thema zu erstellen!', 'red', 2000)
+                break;
         }
 
 

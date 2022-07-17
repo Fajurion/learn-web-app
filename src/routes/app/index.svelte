@@ -35,7 +35,10 @@
     </div>
 
     <div in:fly={{y: 200, delay: 300}} class="container">
-        <h2>Klassenarbeiten</h2>
+        <div class="titlebar">
+            <h2>Klassenarbeiten</h2>
+            <span style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
+        </div>
 
         <div class="content">
             <div class="element">
@@ -56,7 +59,10 @@
     </div>
 
     <div in:fly={{y: 200, delay: 450}} class="container">
-        <h2>Gruppen</h2>
+        <div class="titlebar">
+            <h2>Gruppen</h2>
+            <span style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
+        </div>
 
         <div class="content">
             <div class="element">
@@ -98,7 +104,7 @@
     }
 
     .container {
-        margin: 1.5em;
+        margin: 1em;
         margin-top: 0;
 
         .content {
@@ -127,6 +133,25 @@
                 &:hover {
                     background-color: var(--hover-color);
                 }
+            }
+        }
+    }
+
+    .titlebar {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 0.7em;
+
+        span {
+            padding: 0.2em;
+            background-color: var(--box-color);
+            border-radius: 1em;
+            transition: 250ms ease;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--highlight-color);
             }
         }
     }
