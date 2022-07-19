@@ -1,14 +1,16 @@
 <script lang="ts">
+import { goto } from "$app/navigation";
+
     import { fly } from "svelte/transition"
 
 </script>
 
-<div class="panel">
+<div out:fly={{x: -500, duration: 250}} in:fly={{x: 500, duration: 250, delay: 250}} class="panel">
     <div class="center">
-        <h1 in:fly={{y: 200}} >FaJurion Learn</h1>
+        <h1><span style="font-size: 50px;" class="material-icons">school</span>Learn</h1>
     </div>
 
-    <div in:fly={{y: 200, delay: 150}} class="container">
+    <div class="container">
         <h2>Zuletzt angesehen</h2>
 
         <div class="content">
@@ -34,7 +36,7 @@
         </div>
     </div>
 
-    <div in:fly={{y: 200, delay: 300}} class="container">
+    <div class="container">
         <div class="titlebar">
             <h2>Klassenarbeiten</h2>
             <span style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
@@ -58,10 +60,10 @@
         </div>
     </div>
 
-    <div in:fly={{y: 200, delay: 450}} class="container">
+    <div class="container">
         <div class="titlebar">
             <h2>Gruppen</h2>
-            <span style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
+            <span on:click={() => goto('/app/groups')} style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
         </div>
 
         <div class="content">
@@ -100,7 +102,14 @@
     }
 
     h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
         margin: 1em 2em;
+
+        span {
+            color: var(--highlight-color);
+        }
     }
 
     .container {

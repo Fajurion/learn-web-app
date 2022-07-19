@@ -3,7 +3,7 @@ import Sidebar from "$lib/sidebar/sidebar.svelte";
 import Navigation from "$lib/nav/navigation.svelte";
 import type { Load } from "@sveltejs/kit"; 
 import Notification from "$lib/components/notification.svelte";
-import Postbar from "$lib/nav/postbar.svelte";
+import Menu from "$lib/nav/menu.svelte";
 
     export const load: Load = ({session}) => {
     
@@ -17,6 +17,8 @@ import Postbar from "$lib/nav/postbar.svelte";
     return {};
 }
 </script>
+
+<Menu />
 
 <Notification />
 

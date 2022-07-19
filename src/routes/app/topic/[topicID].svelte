@@ -63,7 +63,7 @@ function previousPage() {
 
 {/if}
 
-<div class="panel">
+<div in:scale out:fly={{x: -100, duration: 200}} class="panel">
     
     {#if $requesting && !$addForm}
     <div class="center">

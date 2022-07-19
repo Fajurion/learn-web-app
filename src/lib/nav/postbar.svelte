@@ -1,11 +1,12 @@
 <script lang="ts">
 import { addForm } from "$lib/posts/posts";
 import { currentTopic } from "$lib/sidebar/topics";
+import { slide } from "svelte/transition";
 
 </script>
 
 {#if $currentTopic.name}
-<div class="bar">
+<div in:slide={{duration: 200, delay: 250}} out:slide={{duration: 200}} class="bar">
     <p><span class="material-icons">feed</span>{$currentTopic.name}</p>
     <div class="toolbar">
         <span class="material-icons">info</span>
