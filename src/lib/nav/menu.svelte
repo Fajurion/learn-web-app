@@ -11,9 +11,9 @@ import { menuOpen } from "$lib/nav/menuStore";
 <div on:click={closeMenu} class="main {$menuOpen ? '' : 'main-hidden'}">
     <div class="menu {$menuOpen ? '' : 'menu-hidden'}">
         
-        <h2 on:click={() => goto('/app/')}><span class="material-icons">school</span>Learn</h2>
-        <h2 on:click={() => goto('/app/groups/')}><span class="material-icons">group</span>Gruppen</h2>
-        <h2 on:click={() => goto('/app/exams/')}><span class="material-icons">menu_book</span>Klassenarbeiten</h2>
+        <h2 on:click={() => goto('/app/')}><span style="font-size: 30px;" class="material-icons">school</span>Learn</h2>
+        <h2 on:click={() => goto('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
+        <h2 on:click={() => goto('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
 
     </div>
 </div>

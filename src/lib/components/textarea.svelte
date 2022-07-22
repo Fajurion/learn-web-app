@@ -8,7 +8,6 @@
         txt.style.height = '0px'
         // @ts-ignore
         txt.style.height = txt?.scrollHeight + 'px'
-        console.log(txt?.scrollHeight)
     }
 </script>
 

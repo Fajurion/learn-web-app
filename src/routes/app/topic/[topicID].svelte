@@ -230,24 +230,6 @@ function previousPage() {
         display: none;
     }
 
-    input {
-        height: 1em;
-        overflow: hidden;
-        resize: none;
-        outline: none;
-        border: none;
-        font-size: 18px;
-        padding: 0.5em 0.6em;
-        border-radius: 0.3em;
-        background-color: var(--menu-color);
-        color: var(--text-color);
-        transition: 250ms ease;
-    }
-
-    .loading {
-        user-select: none;
-        animation: loading 1s infinite;
-    }
 
     .postbar {
         margin-top: 10px;
@@ -280,6 +262,25 @@ function previousPage() {
         .selected {
             color: var(--highlight-color);
         }
+    }
+
+    input {
+        height: 1em;
+        overflow: hidden;
+        resize: none;
+        outline: none;
+        border: none;
+        font-size: 18px;
+        padding: 0.5em 0.6em;
+        border-radius: 0.3em;
+        background-color: var(--menu-color);
+        color: var(--text-color);
+        transition: 250ms ease;
+    }
+
+    .loading {
+        user-select: none;
+        animation: loading 1s infinite;
     }
 
     @keyframes loading {
