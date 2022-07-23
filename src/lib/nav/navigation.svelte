@@ -1,6 +1,6 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
-import { menuOpen } from "$lib/nav/menuStore";
+import { menuOpen, sidebarOpen } from "$lib/nav/menuStore";
 
 
     function returnToStart() {
@@ -15,7 +15,10 @@ import { menuOpen } from "$lib/nav/menuStore";
 <div class="nav">
 
     <div class="title">
+        <span on:click={() => sidebarOpen.set(!$sidebarOpen)} class="material-icons menu-button {$sidebarOpen ? 'selected' : ''}">logout</span>
         <span on:click={() => menuOpen.set(true)} class="material-icons">menu</span>
+        <span on:click={returnToStart} class="material-icons blue">school</span>
+
         <h2 on:click={returnToStart}><span class="material-icons">school</span>Learn</h2>
     </div>
 
@@ -28,7 +31,9 @@ import { menuOpen } from "$lib/nav/menuStore";
 
 <style lang="scss">
     .nav {
-        padding: 0.5em;
+        user-select: none;
+        padding: 0em 0.5em;
+        height: 4.2em;
         background-color: var(--box-color);
         display: flex;
         justify-content: space-between;
@@ -42,7 +47,6 @@ import { menuOpen } from "$lib/nav/menuStore";
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0em 0.8em;
             border-radius: 0.5em;
             gap: 0.3em;
 
@@ -74,6 +78,22 @@ import { menuOpen } from "$lib/nav/menuStore";
                     color: var(--highlight-color);
                 }
             }
+
+            .blue {
+                display: none;
+            }
+
+            .menu-button {
+                display: none;
+            }
+
+            .selected {
+                background-color: var(--selected-color);
+
+                &:hover {
+                    background-color: var(--selected-color);
+                }
+            }
         }
 
         .navigation {
@@ -97,6 +117,23 @@ import { menuOpen } from "$lib/nav/menuStore";
             .selected {
                 background-color: var(--hover-color);
             }
+        }
+    }
+
+    @media only screen and (max-width: 400px) {
+        .nav .title h2 {
+            display: none;
+        }
+
+        .nav .title .blue {
+            display: block;
+            color: var(--highlight-color);
+        }
+    }
+
+    @media only screen and (max-width: 1000px) {
+        .nav .title .menu-button {
+            display: block;
         }
     }
 </style>

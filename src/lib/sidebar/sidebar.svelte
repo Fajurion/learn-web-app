@@ -136,7 +136,7 @@ import { loadPosts } from "$lib/posts/posts";
         position: relative;
         width: 100%;
         max-width: 380px;
-        height: calc(100vh - 3.8em);
+        height: calc(100vh - 4.2em);
         background-color: var(--menu-color);
         overflow-y: scroll;
         -ms-overflow-style: none;

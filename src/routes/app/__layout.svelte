@@ -4,6 +4,7 @@ import Navigation from "$lib/nav/navigation.svelte";
 import type { Load } from "@sveltejs/kit"; 
 import Notification from "$lib/components/notification.svelte";
 import Menu from "$lib/nav/menu.svelte";
+import { sidebarOpen } from "$lib/nav/menuStore";
 
     export const load: Load = ({session}) => {
     
@@ -16,7 +17,17 @@ import Menu from "$lib/nav/menu.svelte";
 
     return {};
 }
+
 </script>
+
+<script lang="ts">
+    import { page } from "$app/stores";
+
+    page.subscribe(() => {
+        sidebarOpen.set(false)
+    })
+</script>
+
 
 <Menu />
 
@@ -25,7 +36,9 @@ import Menu from "$lib/nav/menu.svelte";
 <div class="main">
     <Navigation />
     <div class="panel">
-        <Sidebar />
+        <div class="sb {$sidebarOpen ? '' : 'sb-hidden'}">
+            <Sidebar />
+        </div>
         
         <div class="main-panel">
             <slot />
@@ -56,5 +69,23 @@ import Menu from "$lib/nav/menu.svelte";
         justify-content: center;
         flex-direction: column;
         align-items: center;
+    }
+
+    .sb {
+        width: 100%;
+        max-width: 380px;
+    }
+
+    @media only screen and (max-width: 1000px) {
+        .sb {
+            position: absolute;
+            z-index: 1;
+            transition: transform 250ms ease;
+        }
+
+        .sb-hidden {
+            pointer-events: none;
+            transform: translate(-100%, 0);
+        }
     }
 </style>

@@ -2,6 +2,54 @@
 import { goto } from "$app/navigation";
 
     import { fly } from "svelte/transition"
+    import { onMount } from "svelte";
+import { basePath, getToken } from "$lib/configuration";
+import { showNotification } from "$lib/components/notificationStore";
+import "$lib/styles/components.scss"
+
+    let groupList: any[] = [], testList: any[]
+
+    onMount(() => {
+
+        fetch(basePath + '/api/start', {
+            method: 'post',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                token: getToken()
+            })
+        }).then(async res => {
+
+            if(res.ok) {
+                const json = await res.json()
+                console.log(json)
+
+                if(!json.success) {
+                    
+                    switch(json.message) {
+                        case 'server.error':
+                            showNotification('Es gab einen Fehler auf dem Server. Bitte kontaktiere einen Administrator!', 'red', 2000)
+                            break
+
+                        case 'session.expired.deleted':
+                        case 'session.expired':
+                            showNotification('Deine Sitzung ist abgelaufen!', 'red', 2000)
+                            break
+                    }
+
+                    return
+                }
+
+                groupList = json.groups
+
+            } else {
+                showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000)
+            }
+
+        }).catch(() => showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000))
+
+    })
 
 </script>
 
@@ -11,75 +59,49 @@ import { goto } from "$app/navigation";
     </div>
 
     <div class="container">
-        <h2>Zuletzt angesehen</h2>
-
-        <div class="content">
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">feed</span>
-                <p>Induktion</p>
-            </div>
-
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">group</span>
-                <p>Mathe VK</p>
-            </div>
-
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">menu_book</span>
-                <p>3. Latein KA</p>
-            </div>
-
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">menu_book</span>
-                <p>3. Mathe KA</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
         <div class="titlebar">
             <h2>Klassenarbeiten</h2>
             <span style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
         </div>
 
-        <div class="content">
+        <div class="horizontal">
             <div class="element">
                 <span style="font-size: 100px;" class="material-icons">menu_book</span>
                 <p>3. Mathe KA</p>
             </div>
-
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">menu_book</span>
-                <p>1. Musik KA</p>
-            </div>
-
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">menu_book</span>
-                <p>5. Latein KA</p>
-            </div>
         </div>
     </div>
 
+    {#if groupList[0]}
     <div class="container">
         <div class="titlebar">
             <h2>Gruppen</h2>
             <span on:click={() => goto('/app/groups')} style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
         </div>
 
-        <div class="content">
-            <div class="element">
+        <div class="horizontal">
+            {#each groupList as group}
+            <div on:click={() => goto('/app/groups/' + group.id)} class="element">
                 <span style="font-size: 100px;" class="material-icons">group</span>
-                <p>Klasse 10e</p>
+                <p>{group.name}</p>
+            </div>
+            {/each}
+        </div>
+    </div>
+    {/if}
+
+    <div class="container">
+        <h2>Neu bei Learn?</h2>
+
+        <div class="horizontal">
+            <div on:click={() => goto('/app/groups')} class="element">
+                <span style="font-size: 100px;" class="material-icons">group_add</span>
+                <p>Gruppe finden</p>
             </div>
 
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">group</span>
-                <p>Physik LK</p>
-            </div>
-
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">group</span>
-                <p>Latein LK</p>
+            <div on:click={() => goto('/app/guides')} class="element">
+                <span style="font-size: 100px;" class="material-icons">quiz</span>
+                <p>Hilfe</p>
             </div>
         </div>
     </div>
@@ -88,9 +110,17 @@ import { goto } from "$app/navigation";
 <style lang="scss">
 
     .panel {
-        width: 100%;
+        width: 95%;
+        padding: 0.5em;
         max-width: 1400px;
         height: calc(100vh - 3.8em);
+        overflow-x: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .panel::-webkit-scrollbar {
+        display: none;
     }
 
     .center {
@@ -109,40 +139,6 @@ import { goto } from "$app/navigation";
 
         span {
             color: var(--highlight-color);
-        }
-    }
-
-    .container {
-        margin: 1em;
-        margin-top: 0;
-
-        .content {
-            display: flex;
-            gap: 0.5em;
-            margin: 1.3em 0.3em;
-            width: 100%;
-            background-color: var(--menu-color);
-            border-radius: 1em;
-            padding: 1.2em;
-
-            .element {
-                cursor: pointer;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-                transition: 250ms ease;
-                padding: 0.2em 0.8em 1em 0.8em;
-                border-radius: 1em;
-
-                span {
-                    color: var(--highlight-color);
-                }
-
-                &:hover {
-                    background-color: var(--hover-color);
-                }
-            }
         }
     }
 

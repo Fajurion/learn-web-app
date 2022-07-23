@@ -2,12 +2,21 @@
 import { addForm } from "$lib/posts/posts";
 import { currentTopic } from "$lib/sidebar/topics";
 import { slide } from "svelte/transition";
+import { page } from "$app/stores";
+import { goto } from "$app/navigation";
 
 </script>
 
 {#if $currentTopic.name}
 <div in:slide={{duration: 200, delay: 250}} out:slide={{duration: 200}} class="bar">
     <p><span class="material-icons">feed</span>{$currentTopic.name}</p>
+
+    <div class="nav">
+        <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/created')} class="{($page.url.pathname.split('/')[4] || '') === 'created' ? 'selected' : ''}">Meine Sachen</p>
+        <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/')} class="{($page.url.pathname.split('/')[4] || '') === '' ? 'selected' : ''}">Beiträge</p>
+        <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/tasks')} class="{($page.url.pathname.split('/')[4] || '') === 'tasks' ? 'selected' : ''}">Aufgaben</p>
+    </div>
+
     <div class="toolbar">
         <span class="material-icons">info</span>
         <span on:click={() => addForm.set(true)} class="material-icons">add</span>
@@ -54,6 +63,31 @@ import { slide } from "svelte/transition";
 
             &:hover {
                 color: var(--highlight-color);
+            }
+        }
+    }
+
+    .nav {
+        display: flex;
+        gap: 0.6em;
+        align-items: center;
+
+        p {
+            cursor: pointer;
+            padding: 0.5em 1em;
+            border-radius: 0.3em;
+            transition: 250ms ease;
+
+            &:hover {
+                background-color: var(--hover-color);
+            }
+        }
+    
+        .selected {
+            background-color: var(--selected-color);
+
+            &:hover {
+                background-color: var(--selected-color);
             }
         }
     }

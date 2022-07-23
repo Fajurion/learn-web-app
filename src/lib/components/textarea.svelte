@@ -1,6 +1,12 @@
 <script>
+import { onMount } from "svelte";
+
 	export let value = '';
     export let placeholder = ''
+
+    onMount(() => {
+        expand()
+    })
 
     function expand() {
         const txt = document.querySelector('#textarea')

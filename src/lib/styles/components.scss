@@ -1,0 +1,66 @@
+.container {
+    padding: 0.2em 1em;
+
+    .horizontal {
+        display: flex;
+        gap: 0.5em;
+        margin: 1.3em 0.3em;
+        background-color: var(--menu-color);
+        border-radius: 1em;
+        padding: 1.2em;
+        overflow: hidden;
+
+        .element {
+            user-select: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: 250ms ease;
+            padding: 0.2em 0.8em 1em 0.8em;
+            border-radius: 1em;
+
+            span {
+                color: var(--highlight-color);
+            }
+
+            &:hover {
+                background-color: var(--hover-color);
+            }
+        }
+    }
+
+    .vertical {
+        display: flex;
+        gap: 0.5em;
+        margin: 1.3em 0.3em;
+        background-color: var(--menu-color);
+        border-radius: 1em;
+        padding: 1.2em;
+        flex-direction: column;
+
+        p {
+
+        }
+
+        .element {
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: 250ms ease;
+            padding: 0.2em 0.8em 1em 0.8em;
+            border-radius: 1em;
+
+            span {
+                color: var(--highlight-color);
+            }
+
+            &:hover {
+                background-color: var(--hover-color);
+            }
+        }
+    }
+}

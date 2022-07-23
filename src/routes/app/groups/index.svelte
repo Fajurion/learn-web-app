@@ -56,7 +56,7 @@ function gotoGroup(group: any) {
     
                 <div class="content">
                     <h3>{group.name}</h3>
-                    <p>{group.memberCount == 1 ? '1 Mitglied' : group.memberCount + 'Mitglieder'}</p>
+                    <p>{group.memberCount == 1 ? '1 Mitglied' : group.memberCount + ' Mitglieder'}</p>
                 </div>
             </div>
             <span style="font-size: 30px;" class="material-icons">arrow_forward</span>
@@ -78,8 +78,8 @@ function gotoGroup(group: any) {
 
 <style lang="scss">
     .panel {
-        width: 100%;
-        padding: 0.3em;
+        width: 95%;
+        padding: 0.5em;
         max-width: 1400px;
         height: calc(100vh - 3.8em);
         overflow-x: scroll;

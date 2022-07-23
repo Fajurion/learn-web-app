@@ -2,18 +2,26 @@
 import { goto } from "$app/navigation";
 import { menuOpen } from "$lib/nav/menuStore";
 
-    function closeMenu() {
-        menuOpen.set(false)
+    function closeMenu(url: string) {
+        goto(url)
     }
 
 </script>
 
-<div on:click={closeMenu} class="main {$menuOpen ? '' : 'main-hidden'}">
+<div on:click={() => menuOpen.set(false)} class="main {$menuOpen ? '' : 'main-hidden'}">
     <div class="menu {$menuOpen ? '' : 'menu-hidden'}">
         
-        <h2 on:click={() => goto('/app/')}><span style="font-size: 30px;" class="material-icons">school</span>Learn</h2>
-        <h2 on:click={() => goto('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
-        <h2 on:click={() => goto('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
+        <div class="buttons">
+            <h2 on:click={() => closeMenu('/app')}><span style="font-size: 30px;" class="material-icons">school</span>Learn</h2>
+            <h2 on:click={() => closeMenu('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
+            <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
+            <h2 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">quiz</span>Erklärungen</h2>
+        </div>
+
+        <div class="across">
+            <h3 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">insights</span>Meine Daten</h3>
+            <h3 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">logout</span>Ausloggen</h3>
+        </div>
 
     </div>
 </div>
@@ -21,6 +29,7 @@ import { menuOpen } from "$lib/nav/menuStore";
 <style lang="scss">
 
     .main {
+        display: flex;
         position: absolute;
         width: 100%;
         height: 100vh;
@@ -37,10 +46,11 @@ import { menuOpen } from "$lib/nav/menuStore";
     .menu {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         height: 100vh;
-        width: 350px;
+        width: 90%;
         padding: 0em 0.3em;
-        max-width: 100%;
+        max-width: 350px;
         background-color: var(--box-color);
         transition: transform 250ms ease;
 
@@ -63,6 +73,31 @@ import { menuOpen } from "$lib/nav/menuStore";
             &:hover {
                 background-color: var(--hover-color);
             }
+        }
+
+        h3 {
+            cursor: pointer;
+            user-select: none;
+            margin: 0.3em;
+            display: flex;
+            align-items: center;
+            color: white;
+            padding: 0.5em;
+            gap: 0.4em;
+            transition: 250ms ease;
+            border-radius: 0.5em;
+
+            span {
+                color: var(--highlight-color);
+            }
+
+            &:hover {
+                background-color: var(--hover-color);
+            }
+        }
+
+        .across {
+            display: flex;
         }
     }
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 import { page } from '$app/stores'
 import Textarea from '$lib/components/textarea.svelte';
-import Postbar from '$lib/nav/postbar.svelte';
 import { loadPosts, postList, requesting, createPost, addForm, likePost, reloadPage, currentPage } from '$lib/posts/posts';
 import { onMount } from 'svelte';
 import { fly, scale } from "svelte/transition"
@@ -45,8 +44,6 @@ function previousPage() {
 
 </script>
 
-<Postbar />
-
 {#if $addForm}
 
 <div in:scale out:scale class="center-form">
@@ -63,7 +60,7 @@ function previousPage() {
 
 {/if}
 
-<div in:scale out:fly={{x: -100, duration: 200}} class="panel">
+<div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
     
     {#if $requesting && !$addForm}
     <div class="center">

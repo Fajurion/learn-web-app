@@ -2,11 +2,12 @@
 import { page } from "$app/stores";
 
 import { currentGroup, retrieveGroup, requesting } from "$lib/groups/groups"
-import { editDescriptionForm, changeDescription, newDescription } from "$lib/groups/overview";
+import { editDescriptionForm, changeDescription, newDescription, changeJoinState } from "$lib/groups/overview";
 import { fly, scale } from "svelte/transition"
 import { onMount } from "svelte";
 import Textarea from "$lib/components/textarea.svelte";
 
+let confirmLeave = false
 let error = false
 
 onMount(() => {
@@ -40,6 +41,25 @@ onMount(() => {
 </div>
 {/if}
 
+{#if confirmLeave}
+<div in:scale out:scale class="center-form">
+    <div style="width: 500px;" class="form">
+        <p style="font-size: 23px;">Willst du diese Gruppe wirklich verlassen?</p>
+
+        <div style="margin-top: 15px;" class="buttons">
+            <button on:click={() => confirmLeave = false}>Abbrechen</button>
+            <button on:click={() => {
+
+                confirmLeave = false
+                changeJoinState($currentGroup.id, true)
+                $currentGroup.member = !$currentGroup.member
+
+            }}>Verlassen</button>
+        </div>
+    </div>
+</div>
+{/if}
+
 <div in:fly={{x: 500, delay: 250, duration: 250}} out:fly={{duration: 250, x: -500}} class="panel">
 
     {#if $requesting}
@@ -54,9 +74,14 @@ onMount(() => {
         <h1><span style="font-size: 40px;" class="material-icons">group</span>{$currentGroup.name}</h1>
 
         {#if $currentGroup.member}
-        <button><span style="font-size: 23px;" class="material-icons">done_all</span>Beigetreten</button>
+        <button on:click={() => confirmLeave = true}><span style="font-size: 23px;" class="material-icons">done_all</span>Beigetreten</button>
         {:else}
-        <button><span style="font-size: 23px;" class="material-icons">add</span>Beitreten</button>
+        <button on:click={() => {
+            
+            changeJoinState($currentGroup.id, false)
+            $currentGroup.member = !$currentGroup.member
+
+        }}><span style="font-size: 23px;" class="material-icons">add</span>Beitreten</button>
         {/if}
     </div>
     
@@ -67,9 +92,16 @@ onMount(() => {
 <style lang="scss">
 
     .panel {
-        width: 100%;
+        width: 95%;
         max-width: 1400px;
         height: calc(100vh - 3.8em);
+        overflow-x: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .panel::-webkit-scrollbar {
+        display: none;
     }
 
     .center {
@@ -109,6 +141,12 @@ onMount(() => {
 
     .form::-webkit-scrollbar {
         display: none;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
     }
 
     h1 {

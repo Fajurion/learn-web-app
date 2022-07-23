@@ -9,6 +9,7 @@
 
 <style lang="scss">
     div {
+        pointer-events: none;
         position: absolute;
         top: 1em;
         width: 100%;

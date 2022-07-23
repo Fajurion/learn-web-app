@@ -63,3 +63,64 @@ export function changeDescription(id: number, description: string) {
 
     }).catch(() => showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000))
 }
+
+export function changeJoinState(id: number, joined: boolean) {
+
+    fetch(basePath + '/api/group/' + (joined ? 'leave' : 'join'), {
+        method: 'post',
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+            token: getToken(),
+            group: id
+        })
+    }).then(async res => {
+
+        if(res.ok) {
+            const json = await res.json()
+            console.log(json)
+
+            if(!json.success) {
+                
+                switch(json.message) {
+                    case 'server.error':
+                        showNotification('Es gab einen Fehler auf dem Server. Bitte kontaktiere einen Administrator!', 'red', 2000)
+                        break
+
+                    case 'session.expired.deleted':
+                    case 'session.expired':
+                        showNotification('Deine Sitzung ist abgelaufen!', 'red', 2000)
+                        break
+
+                    case 'not_joined':
+                        showNotification('Du bist nicht in dieser Gruppe!', 'red', 2000)
+                        break;
+
+                    case 'already_joined':
+                        showNotification('Du bist bereits in dieser Gruppe!', 'red', 2000)
+                        break;
+
+                    case 'not_found':
+                        showNotification('Diese Gruppe wurde nicht gefunden!', 'red', 2000)
+                        break;
+                    
+                    case 'creator':
+                        showNotification('Du kannst deine eigene Gruppe nicht verlassen!', 'red', 2000)
+                        break;
+                }
+
+                return
+            }
+
+            if(joined) {
+                showNotification('Du hast die Gruppe verlassen!', 'green', 2000)
+            } else showNotification('Du bist der Gruppe beigetreten!', 'green', 2000)
+
+        } else {
+            showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000)
+        }
+
+    }).catch(() => showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000))
+
+}
