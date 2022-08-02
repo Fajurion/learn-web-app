@@ -14,7 +14,7 @@ export let addForm = writable(false)
 //*** This code is copyright 2002-2016 by Gavin Kistner, !@phrogz.net
 //*** It is covered under the license viewable at http://phrogz.net/JS/_ReuseLicense.txt
 // (only this function)
-function customFormat(date: Date, formatString: any){
+export function customFormat(date: Date, formatString: any){
     let YYYY,YY,MMMM,MMM,MM,M,DDDD,DDD,DD,D,hhhh,hhh,hh,h,mm,m,ss,s,ampm,AMPM,dMod,th;
     YY = ((YYYY=date.getFullYear())+"").slice(-2);
     MM = (M=date.getMonth()+1)<10?('0'+M):M;
@@ -80,6 +80,8 @@ export function loadPosts(topic: number, page: number) {
             const date = new Date(element.date)
             element.date = customFormat(date, "#DD#/#MM#/#YYYY#");
         });
+
+        json.posts.sort(function(a: any,b: any){return b.likes - a.likes})
 
         postList.set(json.posts)
 
@@ -163,12 +165,7 @@ export function createPost(topic: number, title: string, content: string) {
     })
 
 
-    console.log(succ)
     return succ
-}
-
-export function likePost() {
-
 }
 
 export function reloadPage() {

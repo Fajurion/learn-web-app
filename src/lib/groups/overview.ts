@@ -64,7 +64,7 @@ export function changeDescription(id: number, description: string) {
     }).catch(() => showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000))
 }
 
-export function changeJoinState(id: number, joined: boolean) {
+export function changeJoinState(id: number, joined: boolean, callback: any) {
 
     fetch(basePath + '/api/group/' + (joined ? 'leave' : 'join'), {
         method: 'post',
@@ -79,9 +79,9 @@ export function changeJoinState(id: number, joined: boolean) {
 
         if(res.ok) {
             const json = await res.json()
-            console.log(json)
 
             if(!json.success) {
+                callback()
                 
                 switch(json.message) {
                     case 'server.error':
@@ -118,9 +118,13 @@ export function changeJoinState(id: number, joined: boolean) {
             } else showNotification('Du bist der Gruppe beigetreten!', 'green', 2000)
 
         } else {
+            callback()
             showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000)
         }
 
-    }).catch(() => showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000))
+    }).catch(() => {
+        showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000)
+        callback()
+    })
 
 }

@@ -51,7 +51,10 @@ onMount(() => {
             <button on:click={() => {
 
                 confirmLeave = false
-                changeJoinState($currentGroup.id, true)
+                changeJoinState($currentGroup.id, true, () => {
+                    $currentGroup.member = !$currentGroup.member
+                })
+
                 $currentGroup.member = !$currentGroup.member
 
             }}>Verlassen</button>
@@ -78,7 +81,10 @@ onMount(() => {
         {:else}
         <button on:click={() => {
             
-            changeJoinState($currentGroup.id, false)
+            changeJoinState($currentGroup.id, false, () => {
+                $currentGroup.member = !$currentGroup.member
+            })
+            
             $currentGroup.member = !$currentGroup.member
 
         }}><span style="font-size: 23px;" class="material-icons">add</span>Beitreten</button>
