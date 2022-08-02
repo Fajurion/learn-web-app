@@ -1,9 +1,7 @@
-import { goto } from "$app/navigation";
 import { showNotification } from "$lib/components/notificationStore";
-import { basePath, getToken } from "$lib/configuration";
+import { getToken, postRequest } from "$lib/configuration";
 import { writable } from "svelte/store";
 
-export let requesting = writable(true)
 export let hadError = writable(false)
 export let currentPage = writable(0)
 
@@ -35,45 +33,15 @@ export function customFormat(date: Date, formatString: any){
   };
 
 export function loadPosts(topic: number, page: number) {
-    onRequest()
+
+    postRequest('/api/post/list', {
+        token: getToken(),
+        topic: topic,
+        currentScroll: page * 7
+    }, (json: any) => {
+
+        if(!json.success) return;
     
-    fetch(basePath + '/api/post/list', {
-        method: 'post',
-        headers: {
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-            token: getToken(),
-            topic: topic,
-            currentScroll: page * 7
-        })
-    }).then(res => {
-        stopRequest()
-
-        if(res.ok) {
-            return res.json()
-        } else {
-            showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 2000)
-            return 
-        }
-
-    }).then(json => {
-        console.log(json)
-
-        if(!json.success) {
-
-            switch(json.message) {
-                case "server.error":
-
-                    showNotification('Es gab einen Fehler auf dem Server. Bitte berichte einem Admin davon!', 'red', 5000)
-
-                    break;
-            }
-
-            hadError.set(true)
-            return
-        }
-
         currentPage.set(page)
 
         json.posts.forEach((element: { date: any; }) => {
@@ -85,57 +53,22 @@ export function loadPosts(topic: number, page: number) {
 
         postList.set(json.posts)
 
-    }).catch(() => {
-        showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 2000)
-        stopRequest()
-        hadError.set(true)
     })
 
 }
 
 export function createPost(topic: number, title: string, content: string) {
-
-    let succ = undefined
-
-    onRequest()
     
-    fetch(basePath + '/api/post/create', {
-        method: 'post',
-        headers: {
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-            token: getToken(),
-            topic: topic,
-            title: title,
-            content: content
-        })
-    }).then(res => {
-        stopRequest()
-
-        if(res.ok) {
-            return res.json()
-        } else {
-            showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 2000)
-            throw console.error();
-        }
-
-    }).then(json => {
-
-        console.log(json)
+    postRequest('/api/post/create', {
+        token: getToken(),
+        topic: topic,
+        title: title,
+        content: content
+    }, (json: any) => {
 
         if(!json.success) {
 
             switch(json.message) {
-                case "session.expired.deleted":
-                case "session.expired":
-
-                    showNotification('Deine Sitzung ist abgelaufen!', 'red', 2000)
-                    document.cookie = "token=test ; expires=Thu, 01 Jan 1970 00:00:01 GMT"
-                    goto('/app')
-
-                    break;
-                
                 case "topic.locked":
                     showNotification('Du hast keine Rechte in diesem Thema Beiträge zu erstellen!', 'red', 2000)
                     break;
@@ -158,24 +91,5 @@ export function createPost(topic: number, title: string, content: string) {
 
         showNotification('Dein Beitrag wurde erstellt!', 'green', 2000)
         addForm.set(false)
-
-    }).catch(() => {
-        showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 2000)
-        stopRequest()
     })
-
-
-    return succ
-}
-
-export function reloadPage() {
-
-}
-
-function onRequest() {
-    requesting.set(true)
-}
-
-function stopRequest() {
-    requesting.set(false)
 }

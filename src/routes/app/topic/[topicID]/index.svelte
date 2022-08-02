@@ -1,12 +1,13 @@
 <script lang="ts">
 import { page } from '$app/stores'
 import Textarea from '$lib/components/textarea.svelte';
-import { likeCache, likeLoading, likePost, unlikePost } from '$lib/posts/likes';
-import { loadPosts, postList, requesting, createPost, addForm, reloadPage, currentPage } from '$lib/posts/posts';
+import { likeCache, likePost, unlikePost } from '$lib/posts/likes';
+import { loadPosts, postList, createPost, addForm, currentPage } from '$lib/posts/posts';
 import { onMount } from 'svelte';
 import { fly, scale } from "svelte/transition"
 import "$lib/styles/components.scss"
 import { goto } from '$app/navigation';
+import { requesting, requestURL } from '$lib/configuration';
 
 onMount(() => init())
 
@@ -27,17 +28,13 @@ function init() {
 
 function submitPost() {
     
-    if(createPost(parseInt($page.params.topicID), title, content)) {
-        addForm.set(false)
-        reloadPage()
-    }
+    createPost(parseInt($page.params.topicID), title, content)
 
 }
 
 function nextPage() {
     if($requesting) return
     loadPosts(parseInt($page.params.topicID), $currentPage + 1)
-
 }
 
 function previousPage() {
@@ -46,7 +43,7 @@ function previousPage() {
 }
 
 function likeButton(post: any) {
-    if($likeLoading) return
+    if($requesting) return
 
     if(likeCache.has(post.id) ? likeCache.get(post.id) : post.liked) {
         changeLikeState(post, false)
@@ -64,7 +61,7 @@ function likeButton(post: any) {
 
 }
 
-function changeLikeState(post: any, state: boolean) {
+function changeLikeState(post: any, state: boolean | undefined) {
 
     let newArray: never[] = $postList
 
@@ -103,7 +100,7 @@ function changeLikeState(post: any, state: boolean) {
 
 <div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
     
-    {#if $requesting && !$addForm}
+    {#if $requesting && $requestURL.includes('post') && !$addForm}
     <div class="center">
         <span style="font-size: 100px;" class="material-icons loading">hourglass_empty</span>
     </div>
@@ -131,10 +128,11 @@ function changeLikeState(post: any, state: boolean) {
 
         {#each $postList as post}
     
-        <div on:click={() => goto('/app/post/' + post.id)} class="post">
-            <p class="info">erstellt am {post.date}</p>
-            <h2>{post.title}</h2>
-            {#each post.content.split('\n') as line}
+        <div class="post">
+            <p on:click={() => goto('/app/post/' + post.id)} class="info">erstellt am {post.date}</p>
+            <h2 on:click={() => goto('/app/post/' + post.id)}>{post.title}</h2>
+            <div on:click={() => goto('/app/post/' + post.id)} class="content">
+                {#each post.content.split('\n') as line}
 
                 {#if line.startsWith('# ')}
 
@@ -151,10 +149,11 @@ function changeLikeState(post: any, state: boolean) {
                 {/if}
 
             {/each}
+            </div>
     
             <div class="postbar">
 
-                <span on:click={() => likeButton(post)} class="material-icons {$likeLoading ? 'button-loading' : ''} {post.liked ? 'selected' : ''}">
+                <span on:click={() => likeButton(post)} class="material-icons {post.liked ? 'selected' : ''}">
                     favorite
                     <p>{parseInt(post.likes)}</p>
                 </span>

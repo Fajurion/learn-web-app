@@ -1,10 +1,11 @@
 <script lang="ts">
-import { loadNewTopic, topicList, createTopic, requesting, currentTopic } from "$lib/sidebar/topics";
+import { loadNewTopic, topicList, createTopic, currentTopic } from "$lib/sidebar/topics";
 import { fly, scale } from "svelte/transition"
 import { goto } from '$app/navigation';
 import { page } from '$app/stores'
 import { onMount } from "svelte";
 import { loadPosts } from "$lib/posts/posts";
+import { requesting, requestURL } from "$lib/configuration";
 
     let topicName: string = ''
     let expandAdd = false
@@ -124,7 +125,7 @@ import { loadPosts } from "$lib/posts/posts";
             <button on:click={() => addChild = false}>Zurück</button>
         </div>
         {/if}
-        {#if $requesting}
+        {#if $requesting && $requestURL.includes('topic')}
         <span in:fly out:fly style="font-size: 100px;"class="material-icons loading">hourglass_empty</span>
         {/if} 
     </div>

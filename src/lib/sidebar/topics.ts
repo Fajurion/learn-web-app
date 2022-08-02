@@ -1,9 +1,8 @@
 import { writable } from "svelte/store";
-import { getToken, basePath } from "$lib/configuration"
+import { getToken, basePath, postRequest } from "$lib/configuration"
 import { showNotification } from "$lib/components/notificationStore";
 
 export let currentTopic = writable({})
-export let requesting = writable(true)
 
 export let topicList = writable([])
 export let path = ''
@@ -13,7 +12,6 @@ export let map = new Map<number, []>()
 export let parentMap = new Map<number, number>()
 
 export async function loadNewTopic(parent: boolean, topic: number) {
-    onRequest()
 
     let topicToRq = topic
 
@@ -46,123 +44,52 @@ export async function loadNewTopic(parent: boolean, topic: number) {
 
     if(map.has(topicToRq)) {
         topicList.set(map.get(topicToRq) || [])
-        stopRequest()
     }
 
-    fetch(basePath + '/api/topic/list', {
-        method: 'post',
-        headers: {
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-            token: getToken(),
-            topic: topicToRq
-        })
-    }).then(res => {
-        stopRequest()
-        
-        if(res.ok) {
-            return res.json()
-        } else {
-            showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 5000)
-            return
-        }
+    postRequest('/api/topic/list', {
+        token: getToken(),
+        topic: topicToRq
+    }, (json: any) => {
 
-    }).then(json => {
+        if(!json.success) return;
 
-        if(json.success) {
-            map.set(topic, json.topics)
-            topicList.set(json.topics)
-        }
+        map.set(topic, json.topics)
+        topicList.set(json.topics)
 
-        switch(json.message) {
-
-            case "server.error":
-                showNotification('Es gab einen Fehler auf dem Server! Bitte spreche mit einem Administrator darüber.', 'red', 5000)
-                break;
-
-            case "session.expired.deleted":
-            case "session.expired":
-
-                showNotification('Deine Sitzung ist abgelaufen!', 'red', 5000)
-                document.cookie = "token=test ; expires=Thu, 01 Jan 1970 00:00:01 GMT"
-                location.assign('/')
-
-                break;
-        }
-
-    }).catch(e => {
-        showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 5000)
-        stopRequest()
     })
 
 }
 
 export function createTopic(name: string, parent: number) {
-    onRequest()
 
-    fetch(basePath + '/api/topic/create', {
-        method: 'post',
-        headers: {
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-            token: getToken(),
-            name: name,
-            parent: parent
-        })
-    }).then(res => {
-        stopRequest()
-        
-        if(res.ok) {
-            return res.json()
-        } else {
-            showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 5000)
-            return
-        }
+    postRequest('/api/topic/create', {
+        token: getToken(),
+        name: name,
+        parent: parent
+    }, (json: any) => {
 
-    }).then(json => {
+        if(!json.success) {
 
-        if(json.success) {
-
-            loadNewTopic(false, parent)
-
-            showNotification('Thema wurde erfolgreich erstellt!', 'green', 2000)
-            return
-        }
-
-        switch(json.message) {
-
-            case "server.error":
-                showNotification('Es gab einen Fehler auf dem Server! Bitte spreche mit einem Administrator darüber.', 'red', 5000)
-                break;
-
-            case "session.expired.deleted":
-            case "session.expired":
-
-                showNotification('Deine Sitzung ist abgelaufen!', 'red', 5000)
-                document.cookie = "token=test ; expires=Thu, 01 Jan 1970 00:00:01 GMT"
-                location.assign('/')
-
-                break;
-
-            case "name_too_long":
-                showNotification('Die Länge des Namens darf nicht größer als 50 sein.', 'red', 2000)
-                break;
-
-            case "name_too_short":
-                showNotification('Die Länge des Namens darf nicht kleiner als 3 sein.', 'red', 2000)
-                break;
+            switch(json.message) {
+                case "name_too_long":
+                    showNotification('Die Länge des Namens darf nicht größer als 50 sein.', 'red', 2000)
+                    break;
+    
+                case "name_too_short":
+                    showNotification('Die Länge des Namens darf nicht kleiner als 3 sein.', 'red', 2000)
+                    break;
+                
+                case "no_permission":
+                    showNotification('Du hast nicht genügend Rechte um ein Thema zu erstellen!', 'red', 2000)
+                    break;
+            }
             
-            case "no_permission":
-                showNotification('Du hast nicht genügend Rechte um ein Thema zu erstellen!', 'red', 2000)
-                break;
+            return
         }
 
+        loadNewTopic(false, parent)
+        showNotification('Thema wurde erfolgreich erstellt!', 'green', 2000)
 
-    }).catch(e => {
-        showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 5000)
-        stopRequest()
     })
 
 }
