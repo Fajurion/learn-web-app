@@ -2,12 +2,12 @@ import { showNotification } from "$lib/components/notificationStore";
 import { getToken, postRequest } from "$lib/configuration";
 import { writable } from "svelte/store";
 
-export let hadError = writable(false)
-export let currentPage = writable(0)
+export let hadError = writable(false) // if request had an error
+export let currentPage = writable(0) // current page of post section
 
-export let postList = writable([])
+export let postList = writable([]) // List of posts on current page
 
-export let addForm = writable(false)
+export let addForm = writable(false) // if adding post/task form is open or not
 
 //*** This code is copyright 2002-2016 by Gavin Kistner, !@phrogz.net
 //*** It is covered under the license viewable at http://phrogz.net/JS/_ReuseLicense.txt
@@ -32,42 +32,62 @@ export function customFormat(date: Date, formatString: any){
     return formatString.replace("#hhhh#",hhhh).replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
   };
 
+/**
+ * Loads posts for a page
+ * @param topic id of the topic
+ * @param page page number
+ */
 export function loadPosts(topic: number, page: number) {
 
-    postRequest('/api/post/list', {
+    // Send a request to the server
+    postRequest('/api/post/list', {  // Body of the request
         token: getToken(),
         topic: topic,
         currentScroll: page * 7
     }, (json: any) => {
 
+        // Return if request wasn't successful
         if(!json.success) return;
     
+        // Update current page
         currentPage.set(page)
 
+        // Add dates to each post
         json.posts.forEach((element: { date: any; }) => {
             const date = new Date(element.date)
             element.date = customFormat(date, "#DD#/#MM#/#YYYY#");
         });
 
+        // Sort posts after likes
         json.posts.sort(function(a: any,b: any){return b.likes - a.likes})
 
+        // Set posts
         postList.set(json.posts)
 
     })
 
 }
 
+/**
+ * Creates a new post
+ * @param topic id of the topic
+ * @param title title of the post
+ * @param content content of the post
+ */
 export function createPost(topic: number, title: string, content: string) {
     
-    postRequest('/api/post/create', {
+    // Send a request to the server
+    postRequest('/api/post/create', { // Body of the request
         token: getToken(),
         topic: topic,
         title: title,
         content: content
     }, (json: any) => {
 
+        // Return if request wasn't successful
         if(!json.success) {
 
+            // Send notification
             switch(json.message) {
                 case "topic.locked":
                     showNotification('Du hast keine Rechte in diesem Thema Beiträge zu erstellen!', 'red', 2000)
@@ -89,6 +109,7 @@ export function createPost(topic: number, title: string, content: string) {
             return
         }
 
+        // Send notification and close adding post form
         showNotification('Dein Beitrag wurde erstellt!', 'green', 2000)
         addForm.set(false)
     })

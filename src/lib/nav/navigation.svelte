@@ -2,18 +2,16 @@
 import { goto } from "$app/navigation";
 import { menuOpen, sidebarOpen } from "$lib/nav/menuStore";
 
-
+    // Return to start page
     function returnToStart() {
         goto('/app')
     }
 </script>
 
-<div class="account">
-    
-</div>
-
+<!-- Title bar -->
 <div class="nav">
 
+    <!-- Element in the top left of the titlebar -->
     <div class="title">
         <span on:click={() => sidebarOpen.set(!$sidebarOpen)} class="material-icons menu-button {$sidebarOpen ? 'selected' : ''}">logout</span>
         <span on:click={() => menuOpen.set(true)} class="material-icons">menu</span>
@@ -22,6 +20,7 @@ import { menuOpen, sidebarOpen } from "$lib/nav/menuStore";
         <h2 on:click={returnToStart}><span class="material-icons">school</span>Learn</h2>
     </div>
 
+    <!-- Element in the top right of the titlebar -->
     <div class="navigation">
         <span class="material-icons">notifications</span>
         <span class="material-icons">image</span>

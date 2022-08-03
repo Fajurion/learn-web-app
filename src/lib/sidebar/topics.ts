@@ -11,6 +11,11 @@ export let path = ''
 export let map = new Map<number, []>()
 export let parentMap = new Map<number, number>()
 
+/**
+ * Loads a topic
+ * @param parent if the topic has a parent
+ * @param topic id of the topic 
+ */
 export async function loadNewTopic(parent: boolean, topic: number) {
 
     let topicToRq = topic
@@ -60,16 +65,24 @@ export async function loadNewTopic(parent: boolean, topic: number) {
 
 }
 
+/**
+ * Creates a new topic
+ * @param name name of the topic
+ * @param parent parent of the topic
+ */
 export function createTopic(name: string, parent: number) {
 
-    postRequest('/api/topic/create', {
+    // Send request to the server
+    postRequest('/api/topic/create', { // Body of the request
         token: getToken(),
         name: name,
         parent: parent
     }, (json: any) => {
 
+        // Return if request wasn't successful
         if(!json.success) {
 
+            // Send notification
             switch(json.message) {
                 case "name_too_long":
                     showNotification('Die Länge des Namens darf nicht größer als 50 sein.', 'red', 2000)
@@ -87,24 +100,10 @@ export function createTopic(name: string, parent: number) {
             return
         }
 
+        // Reload sidebar and send notification
         loadNewTopic(false, parent)
         showNotification('Thema wurde erfolgreich erstellt!', 'green', 2000)
 
     })
 
-}
-
-export function test() {
-    requesting.set(true)
-    setTimeout(() => {
-        requesting.set(false)
-    }, 2000);
-}
-
-function onRequest() {
-    requesting.set(true)
-}
-
-function stopRequest() {
-    requesting.set(false)
 }

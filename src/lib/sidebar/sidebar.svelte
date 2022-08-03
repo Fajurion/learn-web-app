@@ -14,8 +14,10 @@ import { requesting, requestURL } from "$lib/configuration";
 
     let childHovered = false
 
+    // Executed on startup
     onMount(() => {
 
+        // Check if there is a topic id in the url
         if($page.params.topicID) {
 
             if (!parseInt($page.params.topicID)) {
@@ -23,32 +25,39 @@ import { requesting, requestURL } from "$lib/configuration";
                 return
             }
 
+            // Load topic by topic id
             loadNewTopic(true, parseInt($page.params.topicID))
         } else refresh()
     })
 
+    // Refresh current topic
     function refresh() {
         loadNewTopic(false, 0)
     }
 
+    // Create a new topic
     function create() {
         createTopic(topicName, topicID)
         addChild = false
     }
 
+    // Hides/shows topic addition form
     function addNewTopic() {
         expandAdd = !expandAdd
     }
 
+    // Add a child topic
     function addChildTopic(id: number) {
         addChild = true
         topicID = id
     }
 
+    // Load child topic of a parent
     function loadChildTopic(id: number, parent: boolean) {
         loadNewTopic(parent, id)
     }
 
+    // Click topic
     function clickTopic(id: number) {
         if(childHovered) return
         goto('/app/topic/' + id)
@@ -64,9 +73,13 @@ import { requesting, requestURL } from "$lib/configuration";
 
 </script>
 
+<!-- Sidebar -->
 <div class="sidebar">
 
+    <!-- Only show if there aren't any topics -->
     {#if !($topicList[0])}
+
+    <!-- Error message in case of no topics -->
     <div class="no-topics {$requesting ? 'hide' : ''}">
 
         <h2>Nichts gefunden!</h2>
@@ -75,7 +88,10 @@ import { requesting, requestURL } from "$lib/configuration";
             <span on:click={addNewTopic} style="font-size: 28px;" class="material-icons {expandAdd ? 'selected' : ''}">add</span>
         </div>
 
+        <!-- Only show if adding form is shown -->
         {#if expandAdd}
+
+        <!-- Topic addition form -->
         <div class="form" in:scale out:scale>
             <p>Thema hinzufügen</p>
             <input bind:value={topicName} type="text" placeholder="Name">
@@ -86,8 +102,10 @@ import { requesting, requestURL } from "$lib/configuration";
 
     </div>
 
+    <!-- Show if there are topics -->
     {:else}
 
+    <!-- Icon bar at the top of sidebar -->
     <div in:scale style="margin-top: 5px;" class="toolbar">
         {#if $topicList[0] && $topicList[0].parent != 0}
             <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => loadChildTopic($topicList[0].parent, true)} class="material-icons">arrow_back</span>
@@ -100,24 +118,40 @@ import { requesting, requestURL } from "$lib/configuration";
     </div>
     {/if}
     
+    <!-- Iterate through current list of topics -->
     {#each $topicList as topic}
+
+    <!-- Topic container -->
     <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}"
      on:click={() => clickTopic(topic.id)} in:fly={{duration: 250}} out:fly={{duration: 250}}>
         <p><span class="material-icons">feed</span>{topic.name}</p>
 
+        <!-- Delete / go into topic button -->
         <div on:mouseenter={() => childHovered = true} on:mouseleave={() => childHovered = false} class="toolbar">
+
+            <!-- Only show if topic has children -->
             {#if topic.category}
             <span style="transform: rotate(180deg);" on:click={() => loadChildTopic(topic.id, false)} class="material-icons">arrow_back</span>
+
+            <!-- Only show if topic doesn't have children -->
             {:else}
+
             <span class="material-icons">delete</span>
             <span on:click={() => addChildTopic(topic.id)} class="material-icons">add</span>
+
             {/if}
         </div>
+
     </div>
     {/each}
 
+    <!-- Centered div -->
     <div class="center {addChild || $requesting ? 'center-shown' : ''}">
+
+        <!-- Only show if add topic form is visible -->
         {#if addChild}
+
+        <!-- Add topic form -->
         <div class="form" in:scale out:scale>
             <p>Thema hinzufügen</p>
             <input bind:value={topicName} type="text" placeholder="Name">
@@ -125,9 +159,13 @@ import { requesting, requestURL } from "$lib/configuration";
             <button on:click={() => addChild = false}>Zurück</button>
         </div>
         {/if}
+
+        <!-- Only show if topics are loading -->
         {#if $requesting && $requestURL.includes('topic')}
+
+        <!-- Loading circle -->
         <span in:fly out:fly style="font-size: 100px;"class="material-icons loading">hourglass_empty</span>
-        {/if} 
+        {/if}
     </div>
 </div>
 

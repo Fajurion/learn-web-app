@@ -2,15 +2,23 @@
 import { goto } from "$app/navigation";
 import { menuOpen } from "$lib/nav/menuStore";
 
+    /**
+     * Changes url
+     * @param url new url
+     */
     function closeMenu(url: string) {
         goto(url)
     }
 
 </script>
 
+<!-- Background of the menu -->
 <div on:click={() => menuOpen.set(false)} class="main {$menuOpen ? '' : 'main-hidden'}">
+
+    <!-- Menu -->
     <div class="menu {$menuOpen ? '' : 'menu-hidden'}">
         
+        <!-- Buttons in the top left -->
         <div class="buttons">
             <h2 on:click={() => closeMenu('/app')}><span style="font-size: 30px;" class="material-icons">school</span>Learn</h2>
             <h2 on:click={() => closeMenu('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
@@ -18,6 +26,7 @@ import { menuOpen } from "$lib/nav/menuStore";
             <h2 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">quiz</span>Erklärungen</h2>
         </div>
 
+        <!-- Buttons in the bottom left -->
         <div class="across">
             <h3 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">insights</span>Meine Daten</h3>
             <h3 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">logout</span>Ausloggen</h3>

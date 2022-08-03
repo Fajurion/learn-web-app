@@ -11,23 +11,35 @@ export function getToken() {
     return cookie.parse(document.cookie).token
 }
 
+/**
+ * Send a normal post request to the server
+ * @param url url of the api
+ * @param body body of the request
+ * @param callback callback in case of request success
+ */
 export function postRequest(url: string, body: any, callback: any) {
+
+    // Change requesting state
     requesting.set(true)
     requestURL.set(url)
 
+    // Send the request
     fetch(basePath + url, {
         method: 'post',
-        headers: {
+        headers: { // Add default headers
             'Content-Type':'application/json'
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body) // Attach body
     }).then(async res => {
+
+        // Update requesting state
         requesting.set(false)
 
+        // Check if request was successful
         if(res.ok) {
             const json = await res.json()
-            console.log(json)
 
+            // Return if request wasn't successful
             if(!json.success) {
                 switch(json.message) {
 
@@ -46,6 +58,7 @@ export function postRequest(url: string, body: any, callback: any) {
                 }
             }
 
+            // Trigger callback
             callback(json)
         } else {
             showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 5000)

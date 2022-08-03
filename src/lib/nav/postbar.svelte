@@ -7,16 +7,23 @@ import { goto } from "$app/navigation";
 
 </script>
 
+<!-- Show only if a topic is open -->
 {#if $currentTopic.name}
+
+<!-- Titlebar above post/task/my stuff section -->
 <div in:slide={{duration: 200, delay: 250}} out:slide={{duration: 200}} class="bar">
+
+    <!-- Text with current topic -->
     <p><span class="material-icons">feed</span>{$currentTopic.name}</p>
 
+    <!-- Selection of what to view -->
     <div class="nav">
         <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/created')} class="{($page.url.pathname.split('/')[4] || '') === 'created' ? 'selected' : ''}">Meine Sachen</p>
         <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/')} class="{($page.url.pathname.split('/')[4] || '') === '' ? 'selected' : ''}">Beiträge</p>
         <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/tasks')} class="{($page.url.pathname.split('/')[4] || '') === 'tasks' ? 'selected' : ''}">Aufgaben</p>
     </div>
 
+    <!-- Buttons on the right -->
     <div class="toolbar">
         <span class="material-icons">info</span>
         <span on:click={() => addForm.set(true)} class="material-icons">add</span>

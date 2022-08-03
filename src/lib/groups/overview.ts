@@ -6,16 +6,24 @@ import { retrieveGroup } from "./groups";
 export let newDescription = writable('')
 export let editDescriptionForm = writable(false)
 
+/**
+ * Sets a new description for a group
+ * @param id id of the group
+ * @param description new description
+ */
 export function changeDescription(id: number, description: string) {
 
-    postRequest('/api/group/edit', {
+    // Send request to the server
+    postRequest('/api/group/edit', { // Body of the request
         token: getToken(),
         group: id,
         description: description
     }, (json: any) => {
 
+        // Return if request wasn't successful
         if(!json.success) {
             
+            // Send notification if something goes wrong
             switch(json.message) {
                 case 'no_permission':
                     showNotification('Du hast keine Rechte die Beschreibung dieser Gruppe zu ändern!', 'red', 2000)
@@ -33,14 +41,23 @@ export function changeDescription(id: number, description: string) {
             return
         }
 
+        // Hide description form and send notification
         editDescriptionForm.set(false)
         newDescription.set('')
         showNotification('Beschreibung wurde aktualisiert!', 'green', 2000)
+
+        // Reload page
         retrieveGroup(id)
 
     })
 }
 
+/**
+ * Leave/join a group
+ * @param id id of the group
+ * @param joined current state of join
+ * @param callback callback for changing it back
+ */
 export function changeJoinState(id: number, joined: boolean, callback: any) {
 
     postRequest('/api/group/' + (joined ? 'leave' : 'join'), {
@@ -48,9 +65,13 @@ export function changeJoinState(id: number, joined: boolean, callback: any) {
         group: id
     }, (json: any) => {
 
+        // Return if request wasn't successful
         if(!json.success) {
+
+            // Change joined state back to previous state
             callback()
             
+            // Send notification
             switch(json.message) {
                 case 'not_joined':
                     showNotification('Du bist nicht in dieser Gruppe!', 'red', 2000)
@@ -72,6 +93,7 @@ export function changeJoinState(id: number, joined: boolean, callback: any) {
             return
         }
 
+        // Send notification of success
         if(joined) {
             showNotification('Du hast die Gruppe verlassen!', 'green', 2000)
         } else showNotification('Du bist der Gruppe beigetreten!', 'green', 2000)

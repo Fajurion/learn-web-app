@@ -3,7 +3,10 @@
 
 </script>
 
+<!-- Hide/show notification -->
 <div class={$showAlert ? 'shown' : ''}>
+
+    <!-- Notification Text -->
     <p style={'background-color: ' + $alertColor + ';'}>{$alertMessage}</p>
 </div>
 
