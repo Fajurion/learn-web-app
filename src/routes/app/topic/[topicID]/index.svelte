@@ -132,7 +132,7 @@ function changeLikeState(post: any, state: boolean | undefined) {
             <p on:click={() => goto('/app/post/' + post.id)} class="info">erstellt am {post.date}</p>
             <h2 on:click={() => goto('/app/post/' + post.id)}>{post.title}</h2>
             <div on:click={() => goto('/app/post/' + post.id)} class="content">
-                {#each post.content.split('\n') as line}
+            {#each post.content.split('\n') as line}
 
                 {#if line.startsWith('# ')}
 

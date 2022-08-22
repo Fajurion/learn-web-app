@@ -55,7 +55,7 @@ export function loadPosts(topic: number, page: number) {
         // Add dates to each post
         json.posts.forEach((element: { date: any; }) => {
             const date = new Date(element.date)
-            element.date = customFormat(date, "#DD#/#MM#/#YYYY#");
+            element.date = customFormat(date, "#DD#.#MM#.#YYYY#");
         });
 
         // Sort posts after likes

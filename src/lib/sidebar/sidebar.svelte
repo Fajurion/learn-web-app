@@ -1,16 +1,21 @@
 <script lang="ts">
 import { loadNewTopic, topicList, createTopic, currentTopic } from "$lib/sidebar/topics";
-import { fly, scale } from "svelte/transition"
+import { fly, scale, slide } from "svelte/transition"
 import { goto } from '$app/navigation';
 import { page } from '$app/stores'
 import { onMount } from "svelte";
 import { loadPosts } from "$lib/posts/posts";
 import { requesting, requestURL } from "$lib/configuration";
+import "$lib/styles/input.scss"
+import "$lib/styles/align.scss"
 
     let topicName: string = ''
     let expandAdd = false
     let topicID = 0
     let addChild = false
+
+    let search = false
+    let searchQuery = ''
 
     let childHovered = false
 
@@ -71,6 +76,18 @@ import { requesting, requestURL } from "$lib/configuration";
         loadPosts(id, 0)
     }
 
+    // Hide/show search field
+    function clickSearch() {
+        search = !search
+        if(search) {
+            searchQuery = ''
+            setTimeout(() => {
+                // @ts-ignore
+                document.querySelector('#searchinput').focus()
+            }, 100);
+        }
+    }
+
 </script>
 
 <!-- Sidebar -->
@@ -111,19 +128,30 @@ import { requesting, requestURL } from "$lib/configuration";
             <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => loadChildTopic($topicList[0].parent, true)} class="material-icons">arrow_back</span>
         {/if}
         <span on:click={() => refresh()} class="material-icons">home</span>
+        <span on:click={clickSearch} class="material-icons {search ? 'selected' : ''}">search</span>
         <span on:click={() => loadChildTopic($topicList[0].parent, false)} class="material-icons">refresh</span>
         {#if $topicList[0]}
             <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => addChildTopic($topicList[0].parent)} class="material-icons">add</span>
         {/if}
     </div>
     {/if}
+
+    <!-- Search bar -->
+    {#if search}
+    <div in:slide out:slide class="cc">
+        <input id="searchinput" bind:value={searchQuery} placeholder="Suche" class="darker scale">
+    </div>
+    {/if}
     
     <!-- Iterate through current list of topics -->
     {#each $topicList as topic}
 
+    <!-- Apply search query -->
+    {#if !search || (search && topic.name.startsWith(searchQuery))}
+
     <!-- Topic container -->
     <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}"
-     on:click={() => clickTopic(topic.id)} in:fly={{duration: 250}} out:fly={{duration: 250}}>
+     on:click={() => clickTopic(topic.id)} in:fly={{duration: 250}} out:slide>
         <p><span class="material-icons">feed</span>{topic.name}</p>
 
         <!-- Delete / go into topic button -->
@@ -143,6 +171,8 @@ import { requesting, requestURL } from "$lib/configuration";
         </div>
 
     </div>
+
+    {/if}
     {/each}
 
     <!-- Centered div -->
@@ -220,6 +250,11 @@ import { requesting, requestURL } from "$lib/configuration";
             &:hover {
                 color: var(--highlight-color);
             }
+        }
+        
+        .selected {
+            background-color: var(--selected-color);
+            color: var(--highlight-color);
         }
     }
 

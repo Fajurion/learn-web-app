@@ -1,10 +1,29 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
 import { menuOpen, sidebarOpen } from "$lib/nav/menuStore";
+import { onMount } from "svelte";
 
     // Return to start page
     function returnToStart() {
         goto('/app')
+    }
+
+    let theme = ''
+
+    onMount(() => {
+        theme = localStorage.getItem('theme') || 'dark'
+
+        if(theme === 'light') {
+            document.body.classList.add('light')
+            document.body.classList.remove('dark')
+        }
+    })
+
+    function changeTheme() {
+        theme = theme === 'dark' ? 'light' : 'dark'
+        document.body.classList.toggle('light')
+        document.body.classList.toggle('dark')
+        localStorage.setItem('theme', theme)
     }
 </script>
 
@@ -23,7 +42,7 @@ import { menuOpen, sidebarOpen } from "$lib/nav/menuStore";
     <!-- Element in the top right of the titlebar -->
     <div class="navigation">
         <span class="material-icons">notifications</span>
-        <span class="material-icons">image</span>
+        <span on:click={changeTheme} class="material-icons">{theme === 'dark' ? 'dark_mode' : 'light_mode'}</span>
         <span class="material-icons">account_circle</span>
     </div>
 </div>
@@ -109,12 +128,12 @@ import { menuOpen, sidebarOpen } from "$lib/nav/menuStore";
                 transition: 250ms ease;
 
                 &:hover {
-                    color: var(--highlight-color);
+                    background-color: var(--hover-color);
                 }
             }
 
             .selected {
-                background-color: var(--hover-color);
+                background-color: var(--selected-color);
             }
         }
     }
