@@ -22,7 +22,7 @@ import { onMount } from "svelte";
         // @ts-ignore
         txt.style.height = '0px'
         // @ts-ignore
-        txt.style.height = txt?.scrollHeight + 'px'
+        txt.style.height = txt?.scrollHeight + "px"
     }
 </script>
 

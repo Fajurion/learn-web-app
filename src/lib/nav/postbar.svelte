@@ -4,6 +4,7 @@ import { currentTopic } from "$lib/sidebar/topics";
 import { slide } from "svelte/transition";
 import { page } from "$app/stores";
 import { goto } from "$app/navigation";
+import "$lib/styles/tooltip.scss"
 
 </script>
 

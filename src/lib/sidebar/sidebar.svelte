@@ -127,11 +127,11 @@ import "$lib/styles/align.scss"
         {#if $topicList[0] && $topicList[0].parent != 0}
             <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => loadChildTopic($topicList[0].parent, true)} class="material-icons">arrow_back</span>
         {/if}
-        <span on:click={() => refresh()} class="material-icons">home</span>
-        <span on:click={clickSearch} class="material-icons {search ? 'selected' : ''}">search</span>
-        <span on:click={() => loadChildTopic($topicList[0].parent, false)} class="material-icons">refresh</span>
+        <p class="b-tooltip" data-ttext="Zurück zur Startseite"><span on:click={() => refresh()} class="material-icons">home</span></p>
+        <p class="b-tooltip" data-ttext="Themen durchsuchen"><span on:click={clickSearch} class="material-icons {search ? 'selected' : ''}">search</span></p>
+        <p class="b-tooltip" data-ttext="Themen neuladen"><span on:click={() => loadChildTopic($topicList[0].parent, false)} class="material-icons">refresh</span></p>
         {#if $topicList[0]}
-            <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => addChildTopic($topicList[0].parent)} class="material-icons">add</span>
+            <p class="b-tooltip" data-ttext="Neues Thema erstellen"><span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => addChildTopic($topicList[0].parent)} class="material-icons">add</span></p>
         {/if}
     </div>
     {/if}

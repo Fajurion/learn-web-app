@@ -12,8 +12,9 @@ import Textarea from "$lib/components/textarea.svelte";
 import { createTask } from "$lib/tasks/tasks";
 import { page } from "$app/stores";
 import "$lib/styles/components.scss"
+import "$lib/styles/tooltip.scss"
 
-    let difficulty = 0
+    let difficulty = 0, filterDifficulty = -1
     let answers: string[] = ['Antwort 1']
     let title = '', task = '', explanation = '', correct = ''
 
@@ -126,12 +127,20 @@ import "$lib/styles/components.scss"
 
 <div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
 
+    <div class="container" style="margin-top: 0.4em;">
+        <div class="row">
+            <input placeholder="Aufgaben suchen" class="scale">
 
-    <h2>Neuste</h2>
+            <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Sortieren nach Schwierigkeiten">
+                <p class="diff-selector" on:click={() => filterDifficulty = -1} style="background-color: {filterDifficulty == -1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">ALLE</p>
+                <p class="diff-selector" on:click={() => filterDifficulty = 0} style="background-color: {filterDifficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
+                <p class="diff-selector" on:click={() => filterDifficulty = 1} style="background-color: {filterDifficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
+                <p class="diff-selector" on:click={() => filterDifficulty = 2} style="background-color: {filterDifficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
-        <h2>Beste Bewertungen</h2>
-
         <div class="vertical">
             {#each taskArray as task}
 
@@ -143,13 +152,9 @@ import "$lib/styles/components.scss"
                         <p style="background-color: {task.difficulty == 0 ? 'green' : task.difficulty == 1 ? 'orange' : 'red'};" class="diff">
                             {task.difficulty == 0 ? 'EINFACH' : task.difficulty == 1 ? 'MITTEL' : 'SCHWER'}
                         </p>
-                        <h3>{task.title}</h3>
                     </div>
 
-                    <div class="row">
-                        <p style="font-size: 20px;"><span style="color: white;" class="material-icons">favorite</span>{task.likes}</p>
-                        <span class="material-icons clickable-list">play_circle</span>
-                    </div>
+                    <h3>{task.title}</h3>
                 </div>
             </div>
         
@@ -208,7 +213,6 @@ import "$lib/styles/components.scss"
     }
 
     input {
-        height: 1em;
         overflow: hidden;
         resize: none;
         outline: none;
@@ -240,6 +244,7 @@ import "$lib/styles/components.scss"
 
     .difficulty {
         display: flex;
+        align-items: center;
         gap: 0.5em;
 
         .diff-selector {
@@ -302,6 +307,7 @@ import "$lib/styles/components.scss"
         align-items: center;
         gap: 0.3em;
         user-select: none;
+        border-radius: 1em;
 
         .info {
             display: flex;
@@ -318,11 +324,27 @@ import "$lib/styles/components.scss"
         .colored {
             color: var(--highlight-color);
         }
+
+        &:hover {
+            background-color: var(--hover-color);
+            cursor: pointer;
+        }
     }
 
     .row {
         display: flex;
         align-items: center;
-        gap: 0.4em;
+        justify-content: space-between;
     }
+
+    .scale {
+        width: 100%;
+        max-width: 200px;
+        transition: max-width 250ms ease;
+    }
+
+    .scale:focus {
+        max-width: 400px;
+    }
+
 </style>

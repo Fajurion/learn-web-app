@@ -55,7 +55,7 @@ export function listGroups(query: string) {
         token: getToken(),
         limit: 12,
         offset: 0,
-        name: query + '%'
+        name: '%' + query + '%'
     }, (json: any) => {
 
         // Return if request wasn't successful

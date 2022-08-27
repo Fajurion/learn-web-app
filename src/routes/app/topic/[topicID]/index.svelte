@@ -6,11 +6,13 @@ import { loadPosts, postList, createPost, addForm, currentPage } from '$lib/post
 import { onMount } from 'svelte';
 import { fly, scale } from "svelte/transition"
 import "$lib/styles/components.scss"
+import "$lib/styles/tooltip.scss"
 import { goto } from '$app/navigation';
 import { requesting, requestURL } from '$lib/configuration';
 
 onMount(() => init())
 
+let filter = 1
 let content: string = '', title: string = ''
 
 function init() {
@@ -112,6 +114,19 @@ function changeLikeState(post: any, state: boolean | undefined) {
         <div class="toolbar">
             <span on:click={init} class="material-icons">refresh</span>
             <span on:click={() => addForm.set(true)} class="material-icons">add</span>
+        </div>
+    </div>
+    {/if}
+
+    {#if $postList[0]}
+    <div class="container" style="margin-top: 0.4em;">
+        <div class="row">
+            <input placeholder="Beiträge suchen" class="scale">
+
+            <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Beiträge ordnen">
+                <p class="diff-selector" on:click={() => filter = 0} style="background-color: {filter == 0 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">NEUSTE</p>
+                <p class="diff-selector" on:click={() => filter = 1} style="background-color: {filter == 1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">BESTE BEWERTUNG</p>
+            </div>
         </div>
     </div>
     {/if}
@@ -396,6 +411,36 @@ function changeLikeState(post: any, state: boolean | undefined) {
         p {
             font-size: 20px;
             font-weight: bold;
+        }
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .scale {
+        width: 100%;
+        max-width: 200px;
+        transition: max-width 250ms ease;
+    }
+
+    .scale:focus {
+        max-width: 400px;
+    }
+
+    .difficulty {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+
+        .diff-selector {
+            padding: 0.3em 0.9em;
+            border-radius: 1em;
+            transition: 250ms ease;
+            cursor: pointer;
+            user-select: none;
         }
     }
 
