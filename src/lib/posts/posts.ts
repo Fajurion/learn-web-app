@@ -37,10 +37,12 @@ export function customFormat(date: Date, formatString: any){
  * @param topic id of the topic
  * @param page page number
  */
-export function loadPosts(topic: number, page: number) {
+export function loadPosts(query: string, filter: number, topic: number, page: number) {
 
     // Send a request to the server
     postRequest('/api/post/list', {  // Body of the request
+        query: query == '' ? '' : '%' + query + "%",
+        filter: filter,
         token: getToken(),
         topic: topic,
         currentScroll: page * 7
@@ -52,14 +54,18 @@ export function loadPosts(topic: number, page: number) {
         // Update current page
         currentPage.set(page)
 
+        // Sort posts by likes/dates
+        if(filter == 0) {
+            json.posts.sort(function(a: any,b: any){return b.likes - a.likes})
+        } else {
+            json.posts.sort(function(a: any,b: any){return b.date - a.date})
+        }
+
         // Add dates to each post
         json.posts.forEach((element: { date: any; }) => {
             const date = new Date(element.date)
             element.date = customFormat(date, "#DD#.#MM#.#YYYY#");
         });
-
-        // Sort posts after likes
-        json.posts.sort(function(a: any,b: any){return b.likes - a.likes})
 
         // Set posts
         postList.set(json.posts)

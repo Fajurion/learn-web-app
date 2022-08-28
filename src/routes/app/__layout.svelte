@@ -76,7 +76,7 @@ import { sidebarOpen } from "$lib/nav/menuStore";
         max-width: 380px;
     }
 
-    @media only screen and (max-width: 1000px) {
+    @media only screen and (max-width: 1400px) {
         .sb {
             position: absolute;
             z-index: 1;

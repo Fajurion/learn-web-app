@@ -1,11 +1,8 @@
 <script lang="ts">
 import { showNotification } from "$lib/components/notificationStore";
-
-import { scale, fly } from "svelte/transition";
-  
-import { basePath, getToken } from "$lib/configuration";
+import { scale, fly, slide } from "svelte/transition";
+import { getToken, postRequest } from "$lib/configuration";
 import { currentTopic } from "$lib/sidebar/topics";
-
 import { onMount } from "svelte";
 import { addForm } from '$lib/posts/posts';
 import Textarea from "$lib/components/textarea.svelte";
@@ -13,10 +10,12 @@ import { createTask } from "$lib/tasks/tasks";
 import { page } from "$app/stores";
 import "$lib/styles/components.scss"
 import "$lib/styles/tooltip.scss"
+import "$lib/styles/align.scss"
+import { requesting, requestURL } from '$lib/configuration';
 
-    let difficulty = 0, filterDifficulty = -1
+    let difficulty = 0, filterDifficulty = -1, filterSorting = 0, currentOffset = 0
     let answers: string[] = ['Antwort 1']
-    let title = '', task = '', explanation = '', correct = ''
+    let title = '', task = '', explanation = '', correct = '', searchQuery = ''
 
     let taskArray: any[] = [];
 
@@ -34,40 +33,47 @@ import "$lib/styles/tooltip.scss"
     }
 
     function loadTasks() {
-        fetch(basePath + '/api/task/list', {
-            method: 'post',
-            headers: {
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                token: getToken(),
-                topic: $page.params.topicID,
-                limit: 10,
-                offset: 0
-            })
-        }).then(async res => {
+        
+        if(taskArray.length >= 10) {
+            currentOffset += 10
+        }
 
-            if(res.ok) {
-                const json = await res.json()
-                console.log(json)
+        postRequest('/api/task/list', {
+            token: getToken(),
+            topic: $page.params.topicID,
+            limit: 10,
+            query: '%' + searchQuery + '%',
+            difficulty: filterDifficulty,
+            sorting: filterSorting,
+            offset: currentOffset
+        }, (json: any) => {
 
-                if(json.success) {
+            if(json.tasks[0]) {
 
-                    if(json.tasks[0]) {
-                        if(taskArray[0]) {
-                            taskArray = taskArray.concat(json.tasks)
-                        } else taskArray = json.tasks
-                    }
-
-                } else {
-                    showNotification('Deine Sitzung ist abgelaufen!', 'red', 2000)
+                if(taskArray.length < 10) {
+                    taskArray = json.tasks
+                    return;
                 }
 
+                if(taskArray[0] && currentOffset != 0) {
+                    taskArray = taskArray.concat(json.tasks)
+                } else taskArray = json.tasks
             } else {
-                showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 2000)
+                currentOffset -= 10;
             }
 
-        }).catch(() => showNotification('Der Server ist gerade offline. Bitte versuche es später nochmal!', 'red', 2000))
+        })
+    }
+
+    function updateFilter(query: string, newFilter: number, newSorting: number) {
+        currentOffset = 0;
+        taskArray = []
+
+        searchQuery = query
+        filterDifficulty = newFilter
+        filterSorting = newSorting
+
+        loadTasks()
     }
 
     onMount(() => {
@@ -129,36 +135,65 @@ import "$lib/styles/tooltip.scss"
 
     <div class="container" style="margin-top: 0.4em;">
         <div class="row">
-            <input placeholder="Aufgaben suchen" class="scale">
+            <input bind:value={searchQuery} on:input={() => updateFilter(searchQuery, filterDifficulty, filterSorting)} placeholder="Aufgaben suchen" class="scale">
 
-            <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Sortieren nach Schwierigkeiten">
-                <p class="diff-selector" on:click={() => filterDifficulty = -1} style="background-color: {filterDifficulty == -1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">ALLE</p>
-                <p class="diff-selector" on:click={() => filterDifficulty = 0} style="background-color: {filterDifficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
-                <p class="diff-selector" on:click={() => filterDifficulty = 1} style="background-color: {filterDifficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
-                <p class="diff-selector" on:click={() => filterDifficulty = 2} style="background-color: {filterDifficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
+            <div class="cc-column">
+                <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Sortieren nach Schwierigkeiten">
+                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, -1, filterSorting)} style="background-color: {filterDifficulty == -1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">ALLE</p>
+                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, 0, filterSorting)} style="background-color: {filterDifficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
+                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, 1, filterSorting)} style="background-color: {filterDifficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
+                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, 2, filterSorting)} style="background-color: {filterDifficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
+                </div>
+                <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Sortierung ändern">
+                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, filterDifficulty, 0)} style="background-color: {filterSorting == 0 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">BESTE BEWERTUNG</p>
+                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, filterDifficulty, 1)} style="background-color: {filterSorting == 1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">NEUSTE</p>
+                </div>
             </div>
         </div>
     </div>
+    
+    {#if !taskArray[0] && !$requesting && !$addForm}
+    <div in:fly class="center">
+        <h2>Keine Aufgaben gefunden!</h2>
+        <div class="toolbar">
+            <span on:click={loadTasks} class="material-icons">refresh</span>
+            <span on:click={() => addForm.set(true)} class="material-icons">add</span>
+        </div>
+    </div>
+    {/if}
 
-    <div class="container">
+    <div class="container" style="margin-bottom: 5em;">
         <div class="vertical">
             {#each taskArray as task}
 
-            <div class="task">
-                <span style="font-size: 50px;" class="material-icons colored">task</span>
-
-                <div class="info">
-                    <div style="display: flex; align-items: center; gap: 0.3em;">
-                        <p style="background-color: {task.difficulty == 0 ? 'green' : task.difficulty == 1 ? 'orange' : 'red'};" class="diff">
-                            {task.difficulty == 0 ? 'EINFACH' : task.difficulty == 1 ? 'MITTEL' : 'SCHWER'}
-                        </p>
+            <div class="task" in:slide={{duration: 150}} out:slide={{duration: 150}}>
+                <div class="description">
+                    <span style="font-size: 50px;" class="material-icons colored">task</span>
+    
+                    <div class="info">
+                        <div style="display: flex; align-items: center; gap: 0.3em;">
+                            <p style="background-color: {task.difficulty == 0 ? 'green' : task.difficulty == 1 ? 'orange' : 'red'};" class="diff">
+                                {task.difficulty == 0 ? 'EINFACH' : task.difficulty == 1 ? 'MITTEL' : 'SCHWER'}
+                            </p>
+                        </div>
+    
+                        <h3>{task.title}</h3>
                     </div>
-
-                    <h3>{task.title}</h3>
                 </div>
+
+                <span class="material-icons" style="transform: rotate(180deg); padding: 0em 0.6em;">arrow_back</span>
             </div>
-        
             {/each}
+
+            {#if $requesting && $requestURL.includes('task') && !$addForm}
+            <div class="cc" in:slide={{duration: 200}} out:slide={{duration: 200}}>
+                <span style="font-size: 100px;" class="material-icons loading">hourglass_empty</span>
+            </div>
+            {/if}
+
+            {#if taskArray.length >= 10}
+            <button on:click={loadTasks}>Mehr anzeigen</button>
+            {/if}
         </div>
     </div>
 
@@ -287,21 +322,20 @@ import "$lib/styles/tooltip.scss"
         }
     }
 
-    .clickable-list {
-        color: white;
+    .task {
+        padding: 0.1em 0.5em;
         border-radius: 1em;
-        width: max-content;
-        padding: 0.3em;
-        background-color: var(--box-color);
-        cursor: pointer;
-        transition: 250ms ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
         &:hover {
-            color: var(--highlight-color);
+            background-color: var(--hover-color);
+            cursor: pointer;
         }
     }
     
-    .task {
+    .description {
         display: flex;
         padding: 0.3em;
         align-items: center;
@@ -345,6 +379,41 @@ import "$lib/styles/tooltip.scss"
 
     .scale:focus {
         max-width: 400px;
+    }
+
+    .toolbar {
+        display: flex;
+        justify-content: center;
+        gap: 0.3em;
+        user-select: none;
+        transition: 250ms ease;
+        transform: scale(1);
+        opacity: 1;
+
+        span {
+            padding: 0.4em;
+            background-color: var(--box-color);
+            border-radius: 1em;
+            transition: 250ms ease;
+            cursor: pointer;
+            display: flex;
+            gap: 0.2em;
+
+            &:hover {
+                color: var(--highlight-color);
+            }
+        }
+    }
+
+    .center {
+        margin-top: 30vh;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 0.5em;
+        width: 100%;
     }
 
 </style>

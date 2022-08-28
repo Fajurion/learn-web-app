@@ -149,7 +149,7 @@ import { onMount } from "svelte";
         }
     }
 
-    @media only screen and (max-width: 1000px) {
+    @media only screen and (max-width: 1400px) {
         .nav .title .menu-button {
             display: block;
         }

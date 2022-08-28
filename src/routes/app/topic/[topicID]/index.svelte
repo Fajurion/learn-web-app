@@ -12,7 +12,8 @@ import { requesting, requestURL } from '$lib/configuration';
 
 onMount(() => init())
 
-let filter = 1
+let filter = 0
+let query = ''
 let content: string = '', title: string = ''
 
 function init() {
@@ -25,7 +26,7 @@ function init() {
         return
     }
 
-    loadPosts(parseInt($page.params.topicID), 0)
+    loadPosts(query, filter, parseInt($page.params.topicID), $currentPage)
 }
 
 function submitPost() {
@@ -36,12 +37,12 @@ function submitPost() {
 
 function nextPage() {
     if($requesting) return
-    loadPosts(parseInt($page.params.topicID), $currentPage + 1)
+    loadPosts(query, filter, parseInt($page.params.topicID), $currentPage + 1)
 }
 
 function previousPage() {
     if($requesting) return
-    loadPosts(parseInt($page.params.topicID), $currentPage - 1)
+    loadPosts(query, filter, parseInt($page.params.topicID), $currentPage - 1)
 }
 
 function likeButton(post: any) {
@@ -84,6 +85,15 @@ function changeLikeState(post: any, state: boolean | undefined) {
 
 }
 
+function updateFilter(newFilter: number) {
+    filter = newFilter
+    loadPosts(query, filter, parseInt($page.params.topicID), $currentPage)
+}
+
+function updateQuery() {
+    loadPosts(query, filter, parseInt($page.params.topicID), $currentPage)
+}
+
 </script>
 
 {#if $addForm}
@@ -118,18 +128,16 @@ function changeLikeState(post: any, state: boolean | undefined) {
     </div>
     {/if}
 
-    {#if $postList[0]}
     <div class="container" style="margin-top: 0.4em;">
         <div class="row">
-            <input placeholder="Beiträge suchen" class="scale">
+            <input bind:value={query} on:input={updateQuery} placeholder="Beiträge suchen" class="scale">
 
             <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Beiträge ordnen">
-                <p class="diff-selector" on:click={() => filter = 0} style="background-color: {filter == 0 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">NEUSTE</p>
-                <p class="diff-selector" on:click={() => filter = 1} style="background-color: {filter == 1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">BESTE BEWERTUNG</p>
+                <p class="diff-selector" on:click={() => updateFilter(1)} style="background-color: {filter == 1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">NEUSTE</p>
+                <p class="diff-selector" on:click={() => updateFilter(0)} style="background-color: {filter == 0 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">BESTE BEWERTUNG</p>
             </div>
         </div>
     </div>
-    {/if}
 
     <div class="scrollable">
 
@@ -144,7 +152,10 @@ function changeLikeState(post: any, state: boolean | undefined) {
         {#each $postList as post}
     
         <div class="post">
-            <p on:click={() => goto('/app/post/' + post.id)} class="info">erstellt am {post.date}</p>
+            <div class="row">
+                <p on:click={() => goto('/app/post/' + post.id)} class="info">{post.creatorName}</p>
+                <p on:click={() => goto('/app/post/' + post.id)} class="info">{post.date}</p>
+            </div>
             <h2 on:click={() => goto('/app/post/' + post.id)}>{post.title}</h2>
             <div on:click={() => goto('/app/post/' + post.id)} class="content">
             {#each post.content.split('\n') as line}
@@ -167,11 +178,18 @@ function changeLikeState(post: any, state: boolean | undefined) {
             </div>
     
             <div class="postbar">
-
                 <span on:click={() => likeButton(post)} class="material-icons {post.liked ? 'selected' : ''}">
                     favorite
                     <p>{parseInt(post.likes)}</p>
                 </span>
+
+                {#if post.created}
+                <span class="material-icons">edit</span>
+                {/if}
+
+                {#if post.created}
+                <span class="material-icons">delete</span>
+                {/if}
             </div>
         </div>
         

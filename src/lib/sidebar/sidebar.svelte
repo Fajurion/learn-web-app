@@ -73,7 +73,7 @@ import "$lib/styles/align.scss"
             }
         })
 
-        loadPosts(id, 0)
+        loadPosts('', 0, id, 0)
     }
 
     // Hide/show search field
@@ -125,7 +125,7 @@ import "$lib/styles/align.scss"
     <!-- Icon bar at the top of sidebar -->
     <div in:scale style="margin-top: 5px;" class="toolbar">
         {#if $topicList[0] && $topicList[0].parent != 0}
-            <span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => loadChildTopic($topicList[0].parent, true)} class="material-icons">arrow_back</span>
+            <p class="b-tooltip" data-ttext="Ein Thema zurück"><span in:fly={{duration: 250}} out:fly={{duration: 250}} on:click={() => loadChildTopic($topicList[0].parent, true)} class="material-icons">arrow_back</span></p>
         {/if}
         <p class="b-tooltip" data-ttext="Zurück zur Startseite"><span on:click={() => refresh()} class="material-icons">home</span></p>
         <p class="b-tooltip" data-ttext="Themen durchsuchen"><span on:click={clickSearch} class="material-icons {search ? 'selected' : ''}">search</span></p>
@@ -151,7 +151,7 @@ import "$lib/styles/align.scss"
 
     <!-- Topic container -->
     <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}"
-     on:click={() => clickTopic(topic.id)} in:fly={{duration: 250}} out:slide>
+     on:click={() => clickTopic(topic.id)} in:fly={{duration: 250}} out:fly={{duration: 250}}>
         <p><span class="material-icons">feed</span>{topic.name}</p>
 
         <!-- Delete / go into topic button -->

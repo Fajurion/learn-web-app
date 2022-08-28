@@ -6,7 +6,6 @@ import { create, createComment, currentPost, loadComments, loadPost } from "$lib
 import "$lib/styles/components.scss"
 import "$lib/styles/form.scss"
 import Textarea from "$lib/components/textarea.svelte";
-import { customFormat } from "$lib/posts/posts";
 
     // Variable for value of comment in comment add form
     let comment = ''
@@ -68,8 +67,25 @@ import { customFormat } from "$lib/posts/posts";
 
     <!-- Post section -->
     <div class="container spacer">
-        <p class="darker">{$currentPost.creator} am {$currentPost.date}</p>
-        <h2>{$currentPost.title}</h2>
+        <div class="row">
+            <div class="title">
+                <p class="darker">{$currentPost.creatorName} am {$currentPost.date}</p>
+                <h2>{$currentPost.title}</h2>
+            </div>
+
+
+            <div class="toolbar">
+
+                {#if $currentPost.created}
+                <span class="material-icons clickable">edit</span>
+                {/if}
+
+                {#if $currentPost.created}
+                <span class="material-icons clickable">delete</span>
+                {/if}
+
+            </div>
+        </div>
         
         <div class="vertical">
             {#each $currentPost.content.split('\n') as line}
@@ -145,5 +161,11 @@ import { customFormat } from "$lib/posts/posts";
     .darker {
         color: var(--hidden-text-color);
         background: none;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 </style>
