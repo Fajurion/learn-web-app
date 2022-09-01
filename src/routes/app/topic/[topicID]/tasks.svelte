@@ -125,8 +125,10 @@ import { requesting, requestURL } from '$lib/configuration';
         </div>
         <Textarea bind:value={explanation} placeholder="Erklärung"/>
 
-        <button on:click={taskCreation} style="margin-top: 20px;">Erstellen</button>
-        <button on:click={() => addForm.set(false)}>Zurück</button>
+        <div class="row">
+            <button on:click={taskCreation} style="margin-top: 20px;">Erstellen</button>
+            <button on:click={() => addForm.set(false)}>Zurück</button>
+        </div>
     </div>
 </div>
 {/if}
@@ -166,7 +168,7 @@ import { requesting, requestURL } from '$lib/configuration';
         <div class="vertical">
             {#each taskArray as task}
 
-            <div class="task" in:slide={{duration: 150}} out:slide={{duration: 150}}>
+            <div class="task">
                 <div class="description">
                     <span style="font-size: 50px;" class="material-icons colored">task</span>
     
@@ -186,7 +188,7 @@ import { requesting, requestURL } from '$lib/configuration';
             {/each}
 
             {#if $requesting && $requestURL.includes('task') && !$addForm}
-            <div class="cc" in:slide={{duration: 200}} out:slide={{duration: 200}}>
+            <div class="cc">
                 <span style="font-size: 100px;" class="material-icons loading">hourglass_empty</span>
             </div>
             {/if}

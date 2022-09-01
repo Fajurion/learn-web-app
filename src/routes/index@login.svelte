@@ -1,4 +1,6 @@
 <script lang="ts">
+import { goto } from "$app/navigation";
+
 import Notification from "$lib/components/notification.svelte";
 import { showNotification } from "$lib/components/notificationStore";
 import { basePath } from "$lib/configuration";
@@ -27,12 +29,13 @@ import { basePath } from "$lib/configuration";
             }
 
         }).then(json => {
+            console.log(json)
 
             if(json.success) {
                 showNotification('Du wirst weitergeleitet..', 'green', 2000)
 
-                document.cookie = "token=" + json.data + "; SameSite=Strict; Secure"
-                location.assign('/app')
+                document.cookie = "token=" + json.data.split(':')[1] + "; SameSite=Strict; Secure"
+                goto("/app")
 
                 return;
             }

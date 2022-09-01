@@ -1,6 +1,6 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
-import { menuOpen, sidebarOpen } from "$lib/nav/menuStore";
+import { accountOpen, menuOpen, sidebarOpen } from "$lib/nav/menuStore";
 import { onMount } from "svelte";
 
     // Return to start page
@@ -41,9 +41,8 @@ import { onMount } from "svelte";
 
     <!-- Element in the top right of the titlebar -->
     <div class="navigation">
-        <span class="material-icons">notifications</span>
-        <span on:click={changeTheme} class="material-icons">{theme === 'dark' ? 'dark_mode' : 'light_mode'}</span>
-        <span class="material-icons">account_circle</span>
+        <p class="b-tooltip" data-ttext="Theme ändern"><span on:click={changeTheme} class="material-icons">{theme === 'dark' ? 'dark_mode' : 'light_mode'}</span></p>
+        <span on:click={() => accountOpen.set(!$accountOpen)} class="material-icons {$accountOpen ? 'selected' : ''}">account_circle</span>
     </div>
 </div>
 
@@ -76,6 +75,7 @@ import { onMount } from "svelte";
 
                 &:hover {
                     background-color: var(--hover-color);
+                    color: var(--highlight-color);
                 }
             }
             
@@ -118,7 +118,7 @@ import { onMount } from "svelte";
             padding: 0em 0.6em;
             display: flex;
             align-items: center;
-            gap: 0.1em;
+            gap: 0.3em;
             justify-content: center;
 
             span {
@@ -129,11 +129,17 @@ import { onMount } from "svelte";
 
                 &:hover {
                     background-color: var(--hover-color);
+                    color: var(--highlight-color);
                 }
             }
 
             .selected {
                 background-color: var(--selected-color);
+                color: var(--highlight-color);
+
+                &:hover {
+                    background-color: var(--selected-color);
+                }
             }
         }
     }

@@ -3,52 +3,12 @@ import { goto } from "$app/navigation";
 
     import { fly } from "svelte/transition"
     import { onMount } from "svelte";
-import { basePath, getToken } from "$lib/configuration";
-import { showNotification } from "$lib/components/notificationStore";
-import "$lib/styles/components.scss"
-
-    let groupList: any[] = [], testList: any[]
+    import "$lib/styles/components.scss"
+    import "$lib/styles/align.scss"
+import { groupList, refreshAccount, accountData } from "$lib/account/account";
 
     onMount(() => {
-
-        fetch(basePath + '/api/start', {
-            method: 'post',
-            headers: {
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                token: getToken()
-            })
-        }).then(async res => {
-
-            if(res.ok) {
-                const json = await res.json()
-                console.log(json)
-
-                if(!json.success) {
-                    
-                    switch(json.message) {
-                        case 'server.error':
-                            showNotification('Es gab einen Fehler auf dem Server. Bitte kontaktiere einen Administrator!', 'red', 2000)
-                            break
-
-                        case 'session.expired.deleted':
-                        case 'session.expired':
-                            showNotification('Deine Sitzung ist abgelaufen!', 'red', 2000)
-                            break
-                    }
-
-                    return
-                }
-
-                groupList = json.groups
-
-            } else {
-                showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000)
-            }
-
-        }).catch(() => showNotification('Der Server ist gerade offline! Bitte versuche es später nochmal.', 'red', 5000))
-
+        refreshAccount()
     })
 
 </script>
@@ -59,31 +19,28 @@ import "$lib/styles/components.scss"
     </div>
 
     <div class="container">
-        <div class="titlebar">
-            <h2>Klassenarbeiten</h2>
-            <span style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
-        </div>
+        <h2>Zuletzt besucht</h2>
 
-        <div class="horizontal">
-            <div class="element">
-                <span style="font-size: 100px;" class="material-icons">menu_book</span>
-                <p>3. Mathe KA</p>
+        <div class="horizontal cc">
+            <div class="not-clickable">
+                <span style="font-size: 50px;" class="material-icons">cancel</span>
+                <p style="margin-top: 10px;">Nichts gefunden</p>
             </div>
         </div>
     </div>
 
-    {#if groupList[0]}
+    {#if $groupList[0]}
     <div class="container">
         <div class="titlebar">
             <h2>Gruppen</h2>
             <span on:click={() => goto('/app/groups')} style="transform: rotate(180deg);" class="material-icons">arrow_back</span>
         </div>
 
-        <div class="horizontal">
-            {#each groupList as group}
+        <div class="horizontal vertical-scroll">
+            {#each $groupList as group}
             <div on:click={() => goto('/app/groups/' + group.id)} class="element">
                 <span style="font-size: 100px;" class="material-icons">group</span>
-                <p>{group.name}</p>
+                <p>{group.name.length > 11 ? group.name.substring(0, 11) + ".." : group.name}</p>
             </div>
             {/each}
         </div>
@@ -159,6 +116,17 @@ import "$lib/styles/components.scss"
                 color: var(--highlight-color);
             }
         }
+    }
+
+    .vertical-scroll {
+        overflow-x: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        overscroll-behavior-inline: contain;
+    }
+
+    .vertical-scroll::-webkit-scrollbar {
+        display: none;
     }
 
 </style>

@@ -31,6 +31,22 @@
                 background-color: var(--hover-color);
             }
         }
+
+        
+        .not-clickable {
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: 250ms ease;
+            padding: 0.2em 0.8em 1em 0.8em;
+            border-radius: 1em;
+
+            span {
+                color: var(--highlight-color);
+            }
+        }
     }
 
     .vertical {
@@ -64,6 +80,7 @@
                 background-color: var(--hover-color);
             }
         }
+
     }
 }
 

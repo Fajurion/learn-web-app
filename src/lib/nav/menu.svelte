@@ -20,7 +20,6 @@ import { menuOpen } from "$lib/nav/menuStore";
         
         <!-- Buttons in the top left -->
         <div class="buttons">
-            <h2 on:click={() => closeMenu('/app')}><span style="font-size: 30px;" class="material-icons">school</span>Learn</h2>
             <h2 on:click={() => closeMenu('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
             <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
             <h2 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">quiz</span>Erklärungen</h2>

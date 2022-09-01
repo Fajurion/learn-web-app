@@ -104,8 +104,10 @@ function updateQuery() {
         <input bind:value={title} type="title" placeholder="Titel">
         <Textarea bind:value={content} placeholder="Text"/>
 
-        <button on:click={submitPost} style="margin-top: 20px;">Erstellen</button>
-        <button on:click={() => addForm.set(false)}>Zurück</button>
+        <div class="row">
+            <button on:click={submitPost} style="margin-top: 20px;">Erstellen</button>
+            <button on:click={() => addForm.set(false)}>Zurück</button>
+        </div>
     </div>
 </div>
 {/if}

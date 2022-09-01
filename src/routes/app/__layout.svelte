@@ -4,7 +4,7 @@ import Navigation from "$lib/nav/navigation.svelte";
 import type { Load } from "@sveltejs/kit"; 
 import Notification from "$lib/components/notification.svelte";
 import Menu from "$lib/nav/menu.svelte";
-import { sidebarOpen } from "$lib/nav/menuStore";
+import { sidebarOpen, accountOpen } from "$lib/nav/menuStore";
 
     export const load: Load = ({session}) => {
     
@@ -22,6 +22,7 @@ import { sidebarOpen } from "$lib/nav/menuStore";
 
 <script lang="ts">
     import { page } from "$app/stores";
+import AccountMenu from "$lib/account/accountMenu.svelte";
 
     page.subscribe(() => {
         sidebarOpen.set(false)
@@ -42,6 +43,10 @@ import { sidebarOpen } from "$lib/nav/menuStore";
         
         <div class="main-panel">
             <slot />
+        </div>
+
+        <div class="account {$accountOpen ? '' : 'account-hidden'}">
+            <AccountMenu />
         </div>
     </div>
 </div>
@@ -74,6 +79,18 @@ import { sidebarOpen } from "$lib/nav/menuStore";
     .sb {
         width: 100%;
         max-width: 380px;
+    }
+
+    .account {
+        position: absolute;
+        right: 0px;
+        z-index: 1;
+        transition: transform 250ms ease;
+    }
+
+    .account-hidden {
+        pointer-events: none;
+        transform: translate(100%, 0);
     }
 
     @media only screen and (max-width: 1400px) {
