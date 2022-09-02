@@ -35,7 +35,9 @@ import { basePath } from "$lib/configuration";
                 showNotification('Du wirst weitergeleitet..', 'green', 2000)
 
                 document.cookie = "token=" + json.data.split(':')[1] + "; SameSite=Strict; Secure"
-                goto("/app")
+
+                if(json.data.split(':')[0] === 'tfa') goto('/tfa')
+                else location.assign("/app")
 
                 return;
             }

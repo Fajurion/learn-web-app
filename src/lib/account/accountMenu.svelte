@@ -3,12 +3,13 @@ import { goto } from "$app/navigation";
 import { page } from "$app/stores";
 import { retrieveGroup } from "$lib/groups/groups";
 
-import { accountOpen, settingsOpen } from "$lib/nav/menuStore";
+import { accountOpen, chatOpen } from "$lib/nav/menuStore";
 
 import { onMount } from "svelte";
 import { refreshAccount, accountData, groupList } from "./account";
 import SettingsMenu from "./settingsMenu.svelte";
 import "$lib/styles/tooltip.scss"
+import { formOpen, formTitle } from "$lib/configuration";
  
     onMount(() => {
         refreshAccount()
@@ -37,12 +38,16 @@ import "$lib/styles/tooltip.scss"
 
         <div class="toolbar">
             <span style="font-size: 26px;" class="material-icons clickable">notifications</span>
-            <span on:click={() => settingsOpen.set(!$settingsOpen)} style="font-size: 26px;" class="material-icons clickable {$settingsOpen ? 'selected' : ''}">settings</span>
+            <span on:click={() => chatOpen.set(!$chatOpen)} style="font-size: 26px;" class="material-icons clickable {$chatOpen ? 'selected' : ''}">chat</span>
+            <span on:click={() => {
+                formOpen.set(!$formOpen)
+                formTitle.set("Einstellungen")
+            }} style="font-size: 26px;" class="material-icons clickable">settings</span>
         </div>
     </div>
 
     <div class="panel">
-        <div class="groups {$settingsOpen ? 'groups-hidden' : ''}">
+        <div class="groups {$chatOpen ? 'groups-hidden' : ''}">
             {#each $groupList as group}
             <div class="group" on:click={() => loadGroup(group.id)}>
                 <p><span style="font-size: 28px" class="material-icons">group</span>{group.name}</p>
@@ -51,8 +56,6 @@ import "$lib/styles/tooltip.scss"
             </div>
             {/each}
         </div>
-    
-        <SettingsMenu />
     </div>
 </div>
 

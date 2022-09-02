@@ -5,7 +5,7 @@ import { goto } from '$app/navigation';
 import { page } from '$app/stores'
 import { onMount } from "svelte";
 import { loadPosts } from "$lib/posts/posts";
-import { requesting, requestURL } from "$lib/configuration";
+import { permissions, requesting, requestURL } from "$lib/configuration";
 import "$lib/styles/input.scss"
 import "$lib/styles/align.scss"
 
@@ -164,7 +164,9 @@ import "$lib/styles/align.scss"
             <!-- Only show if topic doesn't have children -->
             {:else}
 
+            {#if $permissions.includes('delete.topic')}
             <span class="material-icons">delete</span>
+            {/if}
             <span on:click={() => addChildTopic(topic.id)} class="material-icons">add</span>
 
             {/if}

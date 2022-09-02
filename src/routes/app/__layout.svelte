@@ -23,6 +23,10 @@ import { sidebarOpen, accountOpen } from "$lib/nav/menuStore";
 <script lang="ts">
     import { page } from "$app/stores";
 import AccountMenu from "$lib/account/accountMenu.svelte";
+import TwoFactor from "$lib/account/settings/twoFactor.svelte";
+import SettingsMenu from "$lib/account/settingsMenu.svelte";
+import { formOpen, formTitle } from "$lib/configuration";
+import Permissions from "$lib/account/settings/permissions.svelte";
 
     page.subscribe(() => {
         sidebarOpen.set(false)
@@ -33,6 +37,26 @@ import AccountMenu from "$lib/account/accountMenu.svelte";
 <Menu />
 
 <Notification />
+
+<div class="forms {!$formOpen ? 'forms-hidden' : ''}">
+
+    <Notification />
+
+    <div class="form-window {!$formOpen ? 'form-hidden' : ''}">
+        <div class="title">
+            <h2>{$formTitle}</h2>
+            <span on:click={() => formOpen.set(false)} style="font-size: 30px;" class="material-icons">cancel</span>
+        </div>
+
+        {#if $formTitle === 'Einstellungen'}
+        <SettingsMenu />
+        {:else if $formTitle === 'Zwei-Faktor Authentifizierung'}
+        <TwoFactor />
+        {:else if $formTitle === 'Berechtigungen'}
+        <Permissions />
+        {/if}
+    </div>
+</div>
 
 <div class="main">
     <Navigation />
@@ -91,6 +115,70 @@ import AccountMenu from "$lib/account/accountMenu.svelte";
     .account-hidden {
         pointer-events: none;
         transform: translate(100%, 0);
+    }
+
+    .forms {
+        position: absolute;
+        z-index: 100;
+        top: 0px;
+        left: 0px;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.6);
+        transition: 250ms ease;
+    }
+
+    .forms-hidden {
+        pointer-events: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .form-window {
+        border-radius: 1em;
+        padding: 0.2em 1.3em 1.3em 1.3em;
+        background-color: var(--box-color);
+        width: 100%;
+        max-width: 500px;
+        transition: 250ms ease;
+        opacity: 1;
+        color: var(--text-color);
+        max-height: 100vh;
+        overflow-x: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .form-window::-webkit-scrollbar {
+        display: none;
+    }
+
+    .form-hidden {
+        opacity: 0;
+        transform: scale(105%);
+        pointer-events: hidden;
+    }
+
+    .title {
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1em 0.5em;
+        color: var(--text-color);
+
+        span {
+            cursor: pointer;
+            padding: 0.2em;
+            border-radius: 1em;
+            color: var(--highlight-color);
+
+            &:hover {
+                background-color: var(--hover-color);
+            }
+        }
     }
 
     @media only screen and (max-width: 1400px) {

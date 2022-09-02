@@ -4,6 +4,10 @@ import { showNotification } from "./components/notificationStore"
 
 export let requesting = writable(false)
 export let requestURL = writable(' ')
+export let permissions = writable([])
+
+export let formOpen = writable(false)
+export let formTitle = writable("")
 
 export const basePath = 'http://localhost:8880'
 

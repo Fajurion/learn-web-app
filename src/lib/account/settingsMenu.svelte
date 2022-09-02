@@ -1,9 +1,10 @@
-<script lang="ts">
-import { settingsOpen } from "$lib/nav/menuStore";
+<script>
+
+import { formOpen, formTitle, permissions } from "$lib/configuration";
+import { logOut } from "./account";
 
 </script>
-
-<div class="settings {!$settingsOpen ? 'settings-hidden' : ''}">
+<div class="settings">
 
     <h4 class="heading">Sicherheit</h4>
 
@@ -19,7 +20,10 @@ import { settingsOpen } from "$lib/nav/menuStore";
     <div class="setting">
         <div class="title">
             <p><span class="material-icons">shield</span>Zwei-Faktor Authentifizierung</p>
-            <span class="material-icons clickable">launch</span>
+            <span on:click={() => {
+                formOpen.set(true)
+                formTitle.set("Zwei-Faktor Authentifizierung")
+            }} class="material-icons clickable">launch</span>
         </div>
 
         <p class="hidden">Klicke auf den Knopf um einen extra Login-Schritt hinzuzufügen und deinen Account sicherer zu machen.</p>
@@ -33,20 +37,66 @@ import { settingsOpen } from "$lib/nav/menuStore";
             <span class="material-icons clickable">edit</span>
         </div>
 
-        <p class="hidden">Fingerprinting speichert Daten deines Browsers um dein Gerät zu identifizieren und dich vor potentiellen Gefahren zu</p>
+        <p class="hidden">Hier kannst du den Benutzername deines Accounts ändern.</p>
     </div>
 
     <div class="setting">
         <div class="title">
-            <p><span class="material-icons">contacts</span>Profil bearbeiten<span>BALD</span></p>
+            <p><span class="material-icons">delete</span>Sitzungen löschen</p>
             <span class="material-icons clickable">launch</span>
         </div>
 
-        <p class="hidden">Bald kann man hier sein Profilbild setzen und seine eigene Profilseite bearbeiten.</p>
+        <p class="hidden">Hier kannst du alle Sitzungen löschen, um die Sicherheit deines Accounts zu garantieren.</p>
     </div>
 
-    <h4 class="heading">Admin</h4>
+    <div class="setting">
+        <div class="title">
+            <p>Abmelden</p>
+            <span on:click={logOut} class="material-icons clickable">logout</span>
+        </div>
 
+        <p class="hidden">Hier kannst du dich aus deinem Account ausloggen.</p>
+    </div>
+
+    <h4 class="heading">Plattform</h4>
+
+    <div class="setting">
+        <div class="title">
+            <p><span class="material-icons">lock</span>Berechtigungen ansehen</p>
+            <span class="material-icons clickable" on:click={() => {
+                formOpen.set(true)
+                formTitle.set("Berechtigungen")
+            }}>launch</span>
+        </div>
+
+        <p class="hidden">Sehe alles zu was du auf Learn berechtigt bist.</p>
+    </div>
+
+    <div class="setting">
+        <div class="title">
+            <p><span class="material-icons">lock</span>Berechtigungen ansehen</p>
+            <span class="material-icons clickable" on:click={() => {
+                formOpen.set(true)
+                formTitle.set("Berechtigungen")
+            }}>launch</span>
+        </div>
+
+        <p class="hidden">Sehe alles zu was du auf Learn berechtigt bist.</p>
+    </div>
+
+    <div class="setting">
+        <div class="title">
+            <p><span class="material-icons">lock</span>Berechtigungen ansehen</p>
+            <span class="material-icons clickable" on:click={() => {
+                formOpen.set(true)
+                formTitle.set("Berechtigungen")
+            }}>launch</span>
+        </div>
+
+        <p class="hidden">Sehe alles zu was du auf Learn berechtigt bist.</p>
+    </div>
+
+    {#if $permissions.includes('view.admin.panel')}
     <div class="setting">
         <div class="title">
             <p><span class="material-icons">dashboard</span>Zum Adminpanel</p>
@@ -55,6 +105,7 @@ import { settingsOpen } from "$lib/nav/menuStore";
 
         <p class="hidden">Im Adminpanel können erweiterte Einstellungen zur Plattform festgelegt werden.</p>
     </div>
+    {/if}
 
 </div>
 
@@ -62,29 +113,24 @@ import { settingsOpen } from "$lib/nav/menuStore";
 
     .heading {
         margin: 0.5em 0.6em;
+        color: var(--text-color);
     }
 
     .settings {
-        position: absolute;
         width: 100%;
         transition: 250ms ease;
         opacity: 1;
-    }
-
-    .settings-hidden {
-        transform-origin: top center;
-        transform: translate(100%, 0%);
-        pointer-events: none;
     }
 
     .setting {
         margin: 0.5em;
         padding: 0.8em 1em;
         border-radius: 0.6em;
-        background-color: var(--box-color);
+        background-color: var(--menu-color);
         gap: 0.5em;
         display: flex;
         flex-direction: column;
+        color: var(--text-color);
 
         .title {
             display: flex;
