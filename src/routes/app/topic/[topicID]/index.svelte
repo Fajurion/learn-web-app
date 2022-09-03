@@ -330,7 +330,7 @@ function updateQuery() {
         user-select: none;
         transition: 250ms ease;
         transform: scale(1);
-        width: max-content;
+        width: min-content;
         background-color: var(--box-color);
         opacity: 1;
 
@@ -355,7 +355,7 @@ function updateQuery() {
 
         .like-text {
             font-size: 22px;
-            margin-right: 22px;
+            margin-right: 10px;
         }
 
         .selected {

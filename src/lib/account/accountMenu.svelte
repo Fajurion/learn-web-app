@@ -7,7 +7,6 @@ import { accountOpen, chatOpen } from "$lib/nav/menuStore";
 
 import { onMount } from "svelte";
 import { refreshAccount, accountData, groupList } from "./account";
-import SettingsMenu from "./settingsMenu.svelte";
 import "$lib/styles/tooltip.scss"
 import { formOpen, formTitle } from "$lib/configuration";
  
@@ -72,6 +71,10 @@ import { formOpen, formTitle } from "$lib/configuration";
         scrollbar-width: none;
         display: flex;
         flex-direction: column;
+    }
+
+    .bar::-webkit-scrollbar {
+        display: none;
     }
 
     .title {
