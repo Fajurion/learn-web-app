@@ -72,30 +72,6 @@ import { logOut } from "./account";
         <p class="hidden">Sehe alles zu was du auf Learn berechtigt bist.</p>
     </div>
 
-    <div class="setting">
-        <div class="title">
-            <p><span class="material-icons">lock</span>Berechtigungen ansehen</p>
-            <span class="material-icons clickable" on:click={() => {
-                formOpen.set(true)
-                formTitle.set("Berechtigungen")
-            }}>launch</span>
-        </div>
-
-        <p class="hidden">Sehe alles zu was du auf Learn berechtigt bist.</p>
-    </div>
-
-    <div class="setting">
-        <div class="title">
-            <p><span class="material-icons">lock</span>Berechtigungen ansehen</p>
-            <span class="material-icons clickable" on:click={() => {
-                formOpen.set(true)
-                formTitle.set("Berechtigungen")
-            }}>launch</span>
-        </div>
-
-        <p class="hidden">Sehe alles zu was du auf Learn berechtigt bist.</p>
-    </div>
-
     {#if $permissions.includes('view.admin.panel')}
     <div class="setting">
         <div class="title">

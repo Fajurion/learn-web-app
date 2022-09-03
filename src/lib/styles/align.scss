@@ -10,3 +10,22 @@
     justify-content: center;
     flex-direction: column;
 }
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cc-gap {
+    gap: 0.3em;
+}
+
+.cc-space {
+    gap: 0.5em;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+}

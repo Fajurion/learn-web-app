@@ -6,18 +6,17 @@ import { currentTopic } from "$lib/sidebar/topics";
 import { onMount } from "svelte";
 import { addForm } from '$lib/posts/posts';
 import Textarea from "$lib/components/textarea.svelte";
-import { createTask } from "$lib/tasks/tasks";
+import { createTask, listTasks, resetTasks, taskArray, taskFilterSorting, taskFilterDifficulty, taskSearchQuery, taskOffset } from "$lib/tasks/tasks";
 import { page } from "$app/stores";
 import "$lib/styles/components.scss"
 import "$lib/styles/tooltip.scss"
 import "$lib/styles/align.scss"
 import { requesting, requestURL } from '$lib/configuration';
+import { goto } from "$app/navigation";
 
-    let difficulty = 0, filterDifficulty = -1, filterSorting = 0, currentOffset = 0
+    let difficulty = 0
     let answers: string[] = ['Antwort 1']
-    let title = '', task = '', explanation = '', correct = '', searchQuery = ''
-
-    let taskArray: any[] = [];
+    let title = '', task = '', explanation = '', correct = ''
 
     function addAnswer() {
         answers = answers.concat('')
@@ -33,50 +32,23 @@ import { requesting, requestURL } from '$lib/configuration';
     }
 
     function loadTasks() {
-        
-        if(taskArray.length >= 10) {
-            currentOffset += 10
-        }
 
-        postRequest('/api/task/list', {
-            token: getToken(),
-            topic: $page.params.topicID,
-            limit: 10,
-            query: '%' + searchQuery + '%',
-            difficulty: filterDifficulty,
-            sorting: filterSorting,
-            offset: currentOffset
-        }, (json: any) => {
-
-            if(json.tasks[0]) {
-
-                if(taskArray.length < 10) {
-                    taskArray = json.tasks
-                    return;
-                }
-
-                if(taskArray[0] && currentOffset != 0) {
-                    taskArray = taskArray.concat(json.tasks)
-                } else taskArray = json.tasks
-            } else {
-                currentOffset -= 10;
-            }
-
-        })
+        listTasks($taskArray, $taskOffset, $taskSearchQuery, $taskFilterDifficulty, $taskFilterSorting, $page.params.topicID)
     }
 
     function updateFilter(query: string, newFilter: number, newSorting: number) {
-        currentOffset = 0;
-        taskArray = []
+        $taskOffset = 0
+        $taskArray = []
 
-        searchQuery = query
-        filterDifficulty = newFilter
-        filterSorting = newSorting
+        $taskSearchQuery = query
+        $taskFilterDifficulty = newFilter
+        $taskFilterSorting = newSorting
 
         loadTasks()
     }
 
     onMount(() => {
+        resetTasks()
         loadTasks()
     })
 
@@ -93,9 +65,12 @@ import { requesting, requestURL } from '$lib/configuration';
 
         <p style="margin-top: 10px;">Schwierigkeit auswählen</p>
         <div class="difficulty">
-            <p class="diff-selector" on:click={() => difficulty = 0} style="background-color: {difficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
-            <p class="diff-selector" on:click={() => difficulty = 1} style="background-color: {difficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
-            <p class="diff-selector" on:click={() => difficulty = 2} style="background-color: {difficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
+            <p class="diff-selector" on:click={() => difficulty = 0}
+                 style="background-color: {difficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
+            <p class="diff-selector" on:click={() => difficulty = 1}
+                 style="background-color: {difficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
+            <p class="diff-selector" on:click={() => difficulty = 2}
+                 style="background-color: {difficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
         </div>
 
         <div style="margin-top: 10px;" class="difficulty">
@@ -137,49 +112,58 @@ import { requesting, requestURL } from '$lib/configuration';
 
     <div class="container" style="margin-top: 0.4em;">
         <div class="row">
-            <input bind:value={searchQuery} on:input={() => updateFilter(searchQuery, filterDifficulty, filterSorting)} placeholder="Aufgaben suchen" class="scale">
+            <input bind:value={$taskSearchQuery} on:input={() => updateFilter($taskSearchQuery, $taskFilterDifficulty, $taskFilterSorting)}
+             placeholder="Aufgaben suchen" class="scale">
 
             <div class="cc-column">
                 <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Sortieren nach Schwierigkeiten">
-                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, -1, filterSorting)} style="background-color: {filterDifficulty == -1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">ALLE</p>
-                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, 0, filterSorting)} style="background-color: {filterDifficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
-                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, 1, filterSorting)} style="background-color: {filterDifficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
-                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, 2, filterSorting)} style="background-color: {filterDifficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
+                    <p class="diff-selector" on:click={() => updateFilter($taskSearchQuery, -1, $taskFilterSorting)} 
+                        style="background-color: {$taskFilterDifficulty == -1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">ALLE</p>
+                    <p class="diff-selector" on:click={() => updateFilter($taskSearchQuery, 0, $taskFilterSorting)} 
+                        style="background-color: {$taskFilterDifficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
+                    <p class="diff-selector" on:click={() => updateFilter($taskSearchQuery, 1, $taskFilterSorting)} 
+                        style="background-color: {$taskFilterDifficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
+                    <p class="diff-selector" on:click={() => updateFilter($taskSearchQuery, 2, $taskFilterSorting)} 
+                        style="background-color: {$taskFilterDifficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
                 </div>
                 <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Sortierung ändern">
-                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, filterDifficulty, 0)} style="background-color: {filterSorting == 0 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">BESTE BEWERTUNG</p>
-                    <p class="diff-selector" on:click={() => updateFilter(searchQuery, filterDifficulty, 1)} style="background-color: {filterSorting == 1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">NEUSTE</p>
+                    <p class="diff-selector" on:click={() => updateFilter($taskSearchQuery, $taskFilterDifficulty, 0)} 
+                        style="background-color: {$taskFilterSorting == 0 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">BESTE BEWERTUNG</p>
+                    <p class="diff-selector" on:click={() => updateFilter($taskSearchQuery, $taskFilterDifficulty, 1)}
+                        style="background-color: {$taskFilterSorting == 1 ? 'var(--selector-highlight-color)' : 'var(--hover-color)'};">NEUSTE</p>
                 </div>
             </div>
         </div>
     </div>
-    
-    {#if !taskArray[0] && !$requesting && !$addForm}
-    <div in:fly class="center">
-        <h2>Keine Aufgaben gefunden!</h2>
-        <div class="toolbar">
-            <span on:click={loadTasks} class="material-icons">refresh</span>
-            <span on:click={() => addForm.set(true)} class="material-icons">add</span>
-        </div>
-    </div>
-    {/if}
 
     <div class="container" style="margin-bottom: 5em;">
         <div class="vertical">
-            {#each taskArray as task}
 
-            <div class="task">
+            {#if !$taskArray[0] && !$requesting}
+            <div in:fly class="cc cc-space">
+                <h2>Keine Aufgaben gefunden!</h2>
+                <div class="toolbar">
+                    <span on:click={loadTasks} class="material-icons">refresh</span>
+                    <span on:click={() => addForm.set(true)} class="material-icons">add</span>
+                </div>
+            </div>
+            {/if}
+            
+            {#each $taskArray as task}
+            <div on:click={() => goto('/app/tasks/' + task.id)} class="task">
                 <div class="description">
                     <span style="font-size: 50px;" class="material-icons colored">task</span>
     
                     <div class="info">
-                        <div style="display: flex; align-items: center; gap: 0.3em;">
-                            <p style="background-color: {task.difficulty == 0 ? 'green' : task.difficulty == 1 ? 'orange' : 'red'};" class="diff">
+                        <div class="flex cc-space">
+                            <p style="background-color: var(--selector-highlight-color);" class="diff">
                                 {task.difficulty == 0 ? 'EINFACH' : task.difficulty == 1 ? 'MITTEL' : 'SCHWER'}
                             </p>
+        
+                            <h3>{task.title}</h3>
                         </div>
-    
-                        <h3>{task.title}</h3>
+
+                        <p style="color: var(--hidden-text-color);">{task.task}</p>
                     </div>
                 </div>
 

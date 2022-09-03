@@ -1,5 +1,5 @@
 import { showNotification } from "$lib/components/notificationStore";
-import { basePath, getToken, postRequest } from "$lib/configuration";
+import { getToken, postRequest } from "$lib/configuration";
 import { addForm } from "$lib/posts/posts";
 import { writable } from "svelte/store";
 
@@ -62,4 +62,63 @@ export function createTask(topic: number, difficulty: number, title: string, exp
         showNotification('Deine Aufgabe wurde erstellt!', 'green', 2000)
     })
 
+}
+
+export let taskSearchQuery = writable('')
+export let taskFilterDifficulty = writable(-1)
+export let taskFilterSorting = writable(0)
+
+export let taskArray = writable([])
+export let taskOffset = writable(0)
+
+export function listTasks(currentArray: never[], currentOffset: number, searchQuery: string,
+    filterDifficulty: number, filterSorting: number, topic: any) {
+    
+    if(currentArray.length >= 10) {
+        currentOffset += 10
+    }
+
+    postRequest('/api/task/list', {
+        token: getToken(),
+        topic: topic,
+        limit: 10,
+        query: '%' + searchQuery + '%',
+        difficulty: filterDifficulty,
+        sorting: filterSorting,
+        offset: currentOffset
+    }, (json: any) => {
+
+        if(json.tasks[0]) {
+
+            if(currentArray.length < 10) {
+                currentArray = json.tasks
+
+                taskArray.set(currentArray)
+                taskOffset.set(currentOffset)
+                return;
+            }
+
+            if(currentArray[0] && currentOffset != 0) {
+                currentArray = currentArray.concat(json.tasks)
+            } else currentArray = json.tasks
+        } else {
+            currentOffset -= 10;
+        }
+
+        taskArray.set(currentArray)
+        taskOffset.set(currentOffset)
+    })
+}
+
+export function resetNew() {
+    taskArray.set([])
+    taskOffset.set(0)
+}
+
+export function resetTasks() {
+    taskFilterDifficulty.set(-1)
+    taskFilterSorting.set(0)
+    taskSearchQuery.set('')
+    taskArray.set([])
+    taskOffset.set(0)
 }

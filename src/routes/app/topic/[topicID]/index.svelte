@@ -182,8 +182,8 @@ function updateQuery() {
             <div class="postbar">
                 <span on:click={() => likeButton(post)} class="material-icons {post.liked ? 'selected' : ''}">
                     favorite
-                    <p>{parseInt(post.likes)}</p>
                 </span>
+                <p class="like-text {post.liked ? 'selected' : ''}">{parseInt(post.likes)}</p>
 
                 {#if post.created}
                 <span class="material-icons">edit</span>
@@ -321,19 +321,24 @@ function updateQuery() {
 
 
     .postbar {
+        padding: 0.3em;
         margin-top: 10px;
         display: flex;
+        align-items: center;
         gap: 0.3em;
+        border-radius: 0.8em;
         user-select: none;
         transition: 250ms ease;
         transform: scale(1);
+        width: max-content;
+        background-color: var(--box-color);
         opacity: 1;
 
         span {
+            height: max-content;
             font-size: 22px;
-            padding: 0.4em;
-            background-color: var(--box-color);
-            border-radius: 0.5em;
+            padding: 0.3em;
+            border-radius: 2em;
             transition: 250ms ease;
             cursor: pointer;
             display: flex;
@@ -344,8 +349,13 @@ function updateQuery() {
             transform: scale(1.0);
 
             &:hover {
-                transform: scale(1.15);
+                background-color: var(--hover-color);
             }
+        }
+
+        .like-text {
+            font-size: 22px;
+            margin-right: 22px;
         }
 
         .selected {

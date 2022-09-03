@@ -22,7 +22,6 @@ import { menuOpen } from "$lib/nav/menuStore";
         <div class="buttons">
             <h2 on:click={() => closeMenu('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
             <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
-            <h2 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">quiz</span>Erklärungen</h2>
         </div>
 
         <!-- Buttons in the bottom left -->

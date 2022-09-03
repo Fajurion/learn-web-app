@@ -6,6 +6,8 @@ import { create, createComment, currentPost, loadComments, loadPost } from "$lib
 import "$lib/styles/components.scss"
 import "$lib/styles/form.scss"
 import Textarea from "$lib/components/textarea.svelte";
+import { likePost, unlikePost } from "$lib/posts/likes";
+import { permissions, requesting } from "$lib/configuration";
 
     // Variable for value of comment in comment add form
     let comment = ''
@@ -30,7 +32,33 @@ import Textarea from "$lib/components/textarea.svelte";
     function createAction() {
         create(parseInt($page.params.postID), comment, () => {
             commentsArray.push({id: 0, creator: 0, content: comment, creatorName: 'Ich', date: Date.now()})
+            commentsArray = commentsArray
         })
+    }
+
+    function likeButton() {
+        if($requesting) return
+
+        const clone = $currentPost
+        if(clone.liked) {
+            clone.liked = false
+            clone.likes--;
+            $currentPost = clone
+
+            unlikePost($currentPost, () => {
+                clone.liked = false
+                $currentPost = clone
+            })
+        } else {
+            clone.liked = true
+            clone.likes++;
+            $currentPost = clone
+
+            likePost($currentPost, () => {
+                clone.liked = true
+                $currentPost = clone
+            })
+        }
     }
 
 </script>
@@ -80,9 +108,11 @@ import Textarea from "$lib/components/textarea.svelte";
                 <span class="material-icons clickable">edit</span>
                 {/if}
 
-                {#if $currentPost.created}
+                {#if $currentPost.created || $permissions.includes('delete.post')}
                 <span class="material-icons clickable">delete</span>
                 {/if}
+
+                <span class="material-icons clickable">report</span>
 
             </div>
         </div>
@@ -101,6 +131,14 @@ import Textarea from "$lib/components/textarea.svelte";
                 {/if}
 
             {/each}
+        </div>
+
+        <!-- Bar for (un-)liking -->
+        <div class="postbar">
+            <span on:click={() => likeButton()} class="material-icons {$currentPost.liked ? 'selected' : ''}">
+                favorite
+            </span>
+            <p class="like-text {$currentPost.liked ? 'selected' : ''}">{parseInt($currentPost.likes)}</p>
         </div>
     </div>
 
@@ -155,6 +193,7 @@ import Textarea from "$lib/components/textarea.svelte";
         
         &:hover {
             background-color: var(--hover-color);
+            color: var(--highlight-color);
         }
     }
 
@@ -167,5 +206,40 @@ import Textarea from "$lib/components/textarea.svelte";
         display: flex;
         align-items: center;
         justify-content: space-between;
+    }
+
+    .postbar {
+        user-select: none;
+        padding: 0.4em;
+        border-radius: 1em;
+        background-color: var(--menu-color);
+        width: max-content;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        font-size: 22px;
+
+        span {
+            cursor: pointer;
+            border-radius: 1em;
+            padding: 0.3em;
+
+            &:hover {
+                background-color: var(--hover-color);
+            }
+        }
+
+        p {
+            font-size: 22px;
+            padding: 0em 0.5em 0em 0em;
+        }
+
+        .selected {
+            color: var(--highlight-color);
+
+            &:hover {
+                color: var(--highlight-color);
+            }
+        }
     }
 </style>

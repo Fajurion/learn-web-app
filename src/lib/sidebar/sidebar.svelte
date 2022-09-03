@@ -8,6 +8,7 @@ import { loadPosts } from "$lib/posts/posts";
 import { permissions, requesting, requestURL } from "$lib/configuration";
 import "$lib/styles/input.scss"
 import "$lib/styles/align.scss"
+import { listTasks, resetNew, taskFilterDifficulty, taskFilterSorting, taskSearchQuery } from "$lib/tasks/tasks";
 
     let topicName: string = ''
     let expandAdd = false
@@ -60,12 +61,25 @@ import "$lib/styles/align.scss"
     // Load child topic of a parent
     function loadChildTopic(id: number, parent: boolean) {
         loadNewTopic(parent, id)
+        childHovered = false
     }
 
     // Click topic
     function clickTopic(id: number) {
+        console.log(id)
         if(childHovered) return
-        goto('/app/topic/' + id)
+        console.log(id + "weird")
+
+        if($page.url.pathname.includes('tasks')) {
+            goto('/app/topic/' + id + '/tasks')
+
+            resetNew()
+            listTasks([], 0, $taskSearchQuery, $taskFilterDifficulty, $taskFilterSorting, id)
+
+        } else {
+            goto('/app/topic/' + id)
+            loadPosts('', 0, id, 0)
+        }
 
         $topicList.forEach(element => {
             if(element.id == id) {
@@ -73,7 +87,6 @@ import "$lib/styles/align.scss"
             }
         })
 
-        loadPosts('', 0, id, 0)
     }
 
     // Hide/show search field
@@ -151,7 +164,7 @@ import "$lib/styles/align.scss"
 
     <!-- Topic container -->
     <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}"
-     on:click={() => clickTopic(topic.id)} in:fly={{duration: 250}} out:fly={{duration: 250}}>
+     on:click={() => clickTopic(topic.id)}>
         <p><span class="material-icons">feed</span>{topic.name}</p>
 
         <!-- Delete / go into topic button -->

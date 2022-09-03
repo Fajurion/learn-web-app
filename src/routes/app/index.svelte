@@ -1,15 +1,23 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
 
-    import { fly } from "svelte/transition"
+    import { fly, slide } from "svelte/transition"
     import { onMount } from "svelte";
     import "$lib/styles/components.scss"
     import "$lib/styles/align.scss"
-import { groupList, refreshAccount, accountData } from "$lib/account/account";
+    import "$lib/styles/input.scss"
+    import { groupList, refreshAccount } from "$lib/account/account";
+    import { formOpen, formTitle } from "$lib/configuration";
+
+    let questionOpen = ''
 
     onMount(() => {
         refreshAccount()
     })
+
+    function openQuestion(id: string) {
+        questionOpen = questionOpen == id ? '' : id
+    }
 
 </script>
 
@@ -48,23 +56,104 @@ import { groupList, refreshAccount, accountData } from "$lib/account/account";
     {/if}
 
     <div class="container">
-        <h2>Neu bei Learn?</h2>
-
-        <div class="horizontal">
-            <div on:click={() => goto('/app/groups')} class="element">
-                <span style="font-size: 100px;" class="material-icons">group_add</span>
-                <p>Gruppe finden</p>
+        <h2>Guides</h2>
+        
+        <div class="question">
+            <div on:click={() => openQuestion('324')} class="title">
+                <p>Warum kann ich keine Bilder hochladen?</p>
+                <span style="font-size: 40px;" class="material-icons {questionOpen != '324' ? 'open' : 'close'}">expand_less</span>
             </div>
 
-            <div on:click={() => goto('/app/guides')} class="element">
-                <span style="font-size: 100px;" class="material-icons">quiz</span>
-                <p>Hilfe</p>
+            {#if questionOpen == '324'}
+            <div class="answer" in:slide out:slide>
+                <p>Es kann sein dass du keine Berechtigung zum Bilder hochladen hast. Falls dich das stört spreche darüber bitte mit einem
+                    Administrator dieser Plattform, um den Fall zu klären. Wenn du überprüfen willst ob du die Berechtigung hast drücke bitte
+                    auf den Knopf unter dieser Antwort und schau ob du dort die Berechtigung "upload.image" steht, wenn nicht kannst du keine
+                    Bilder hochladen.
+                </p>
+
+                <button on:click={() => {
+                    formOpen.set(true)
+                    formTitle.set('Berechtigungen')
+                }}>Berechtigungen</button>
             </div>
+            {/if}
+        </div>
+
+        <div class="question">
+            <div on:click={() => openQuestion('1')} class="title">
+                <p>Wie aktiviere ich Zwei-Faktor Authentifizierung?</p>
+                <span style="font-size: 40px;" class="material-icons {questionOpen != '1' ? 'open' : 'close'}">expand_less</span>
+            </div>
+
+            {#if questionOpen == '1'}
+            <div class="answer" in:slide out:slide>
+                <p>Die Zwei-Faktor Authentifizierung kann einmal durch die Einstellungen, die sich rechts oben im Account Menü befinden,
+                     oder über den Knopf unter dieser Antwort aktiviert werden.</p>
+
+                <button on:click={() => {
+                    formOpen.set(true)
+                    formTitle.set('Zwei-Faktor Authentifizierung')
+                }}>2FA aktivieren</button>
+            </div>
+            {/if}
+        </div>
+        
+        <div class="question">
+            <div on:click={() => openQuestion('2')} class="title">
+                <p>Warum sollte ich Zwei-Faktor Authentifizierung aktivieren?</p>
+                <span style="font-size: 40px;" class="material-icons {questionOpen != '2' ? 'open' : 'close'}">expand_less</span>
+            </div>
+
+            {#if questionOpen == '2'}
+            <div class="answer" in:slide out:slide>
+                <p>Zwei-Faktor Authentifizierung dient der Sicherheit deines Accounts und vor allem dem der Plattform. Fast alles auf dieser Plattform
+                    ist frei für jeden Benutzer zugänglich und wenn somit ein Account gehackt wird, ist der Inhalt der ganzen Plattform für den Hacker
+                    freigegeben. Wir bitten euch also Zwei-Faktor Authentifizierung zu aktivieren. Gehe dazu einfach in die Frage über dieser.
+                </p>
+            </div>
+            {/if}
+        </div>
+
+        <div class="question">
+            <div on:click={() => openQuestion('3')} class="title">
+                <p>Wer hat diese Plattform programmiert?</p>
+                <span style="font-size: 40px;" class="material-icons {questionOpen != '3' ? 'open' : 'close'}">expand_less</span>
+            </div>
+
+            {#if questionOpen == '3'}
+            <div class="answer" in:slide out:slide>
+                <p>Diese Plattform wird von <a href="https://github.com/Fajurion">Fajurion Open Source</a> entwickelt. Ihr könnt gerne die Administratoren
+                     der Plattform fragen, um euch genaueres zu sagen.
+                </p>
+            </div>
+            {/if}
+        </div>
+
+        <div class="question">
+            <div on:click={() => openQuestion('4')} class="title">
+                <p>Wie kann ich bei der Plattform mitwirken?</p>
+                <span style="font-size: 40px;" class="material-icons {questionOpen != '3' ? 'open' : 'close'}">expand_less</span>
+            </div>
+
+            {#if questionOpen == '4'}
+            <div class="answer" in:slide out:slide>
+                <p>Jede Spende für die Plattform wäre nett, da wir pro Monat sehr viel Geld für die ganze Infrastruktur der Plattform bezahlen. Für genaueres
+                    melde dich einfach bei einem Administrator.
+                </p>
+            </div>
+            {/if}
         </div>
     </div>
+
+    <div class="spacer"></div>
 </div>
 
 <style lang="scss">
+
+    .spacer {
+        margin-bottom: 2em;
+    }
 
     .panel {
         width: 95%;
@@ -127,6 +216,58 @@ import { groupList, refreshAccount, accountData } from "$lib/account/account";
 
     .vertical-scroll::-webkit-scrollbar {
         display: none;
+    }
+
+    .question {
+        margin-top: 10px;
+        padding: 0.3em 1em;
+        background-color: var(--menu-color);
+        border-radius: 0.5em;
+
+        .title {
+            user-select: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1em;
+        }
+
+        .answer {
+            display: flex;
+            justify-content: left;
+            gap: 0.6em;
+            flex-direction: column;
+            transition: 250ms ease;
+            opacity: 1;
+            pointer-events: all;
+            overflow: hidden;
+            margin-bottom: 5px;
+            color: var(--hidden-text-color);
+        }
+
+        button {
+            width: max-content;
+            background-color: var(--box-color);
+
+            &:hover {
+                background-color: var(--hover-color);
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--highlight-color);
+        }
+    }
+
+    .open {
+        transition: 250ms ease;
+        transform: rotate(180deg);
+    }
+
+    .close {
+        transition: 250ms ease;
     }
 
 </style>
