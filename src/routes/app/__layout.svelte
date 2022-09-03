@@ -27,6 +27,7 @@ import TwoFactor from "$lib/account/settings/twoFactor.svelte";
 import SettingsMenu from "$lib/account/settingsMenu.svelte";
 import { formOpen, formTitle } from "$lib/configuration";
 import Permissions from "$lib/account/settings/permissions.svelte";
+import Invite from "$lib/account/settings/invite.svelte";
 
     page.subscribe(() => {
         sidebarOpen.set(false)
@@ -50,10 +51,12 @@ import Permissions from "$lib/account/settings/permissions.svelte";
 
         {#if $formTitle === 'Einstellungen'}
         <SettingsMenu />
-        {:else if $formTitle === 'Zwei-Faktor Authentifizierung'}
+        {:else if $formTitle === '2FA'}
         <TwoFactor />
         {:else if $formTitle === 'Berechtigungen'}
         <Permissions />
+        {:else if $formTitle === 'Einladen'}
+        <Invite />
         {/if}
     </div>
 </div>

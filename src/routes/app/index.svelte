@@ -1,5 +1,5 @@
 <script lang="ts">
-import { goto } from "$app/navigation";
+    import { goto } from "$app/navigation";
 
     import { fly, slide } from "svelte/transition"
     import { onMount } from "svelte";
@@ -8,6 +8,7 @@ import { goto } from "$app/navigation";
     import "$lib/styles/input.scss"
     import { groupList, refreshAccount } from "$lib/account/account";
     import { formOpen, formTitle } from "$lib/configuration";
+import { page } from "$app/stores";
 
     let questionOpen = ''
 
@@ -93,7 +94,7 @@ import { goto } from "$app/navigation";
 
                 <button on:click={() => {
                     formOpen.set(true)
-                    formTitle.set('Zwei-Faktor Authentifizierung')
+                    formTitle.set('2FA')
                 }}>2FA aktivieren</button>
             </div>
             {/if}

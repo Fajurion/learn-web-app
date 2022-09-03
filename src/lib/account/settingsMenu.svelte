@@ -22,7 +22,7 @@ import { logOut } from "./account";
             <p><span class="material-icons">shield</span>Zwei-Faktor Authentifizierung</p>
             <span on:click={() => {
                 formOpen.set(true)
-                formTitle.set("Zwei-Faktor Authentifizierung")
+                formTitle.set("2FA")
             }} class="material-icons clickable">launch</span>
         </div>
 
@@ -59,6 +59,20 @@ import { logOut } from "./account";
     </div>
 
     <h4 class="heading">Plattform</h4>
+
+    {#if $permissions.includes('create.invite')}
+    <div class="setting">
+        <div class="title">
+            <p><span class="material-icons">person_add</span>Einladen</p>
+            <span class="material-icons clickable" on:click={() => {
+                formOpen.set(true)
+                formTitle.set("Einladen")
+            }}>launch</span>
+        </div>
+
+        <p class="hidden">Hier kannst du Benutzer zur Plattform einladen.</p>
+    </div>
+    {/if}
 
     <div class="setting">
         <div class="title">

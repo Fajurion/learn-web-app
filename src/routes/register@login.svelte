@@ -1,6 +1,9 @@
 <script lang="ts">
+import { page } from "$app/stores";
+
 import { showNotification } from "$lib/components/notificationStore";
 import { basePath } from "$lib/configuration";
+import { onMount } from "svelte";
 
     let username: string = '', password: string = '', confirmPW: string = '', email: string = '', invite: string = '';
 
@@ -117,6 +120,10 @@ import { basePath } from "$lib/configuration";
         errorMap.invite = false
     }
 
+    onMount(() => {
+        invite = $page.url.searchParams.get('code') || ''
+    })
+
 </script>
 
 <main>
@@ -126,7 +133,9 @@ import { basePath } from "$lib/configuration";
         <input on:input={type} class={errorMap.email ? 'error' : ''} bind:value={email} type="text" placeholder="E-Mail Adresse">
         <input on:input={type} class={errorMap.password ? 'error' : ''} bind:value={password} type="password" placeholder="Passwort">
         <input on:input={type} class={errorMap.password ? 'error' : ''} bind:value={confirmPW} type="password" placeholder="Passwort wiederholen">
+        {#if !$page.url.searchParams.get('code')}
         <input on:input={type} class={errorMap.invite ? 'error' : ''} bind:value={invite} type="password" placeholder="Lizenz">
+        {/if}
 
         <button on:click={register}>Registrieren</button>
     </div>

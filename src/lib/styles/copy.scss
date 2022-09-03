@@ -1,0 +1,21 @@
+.copy {
+    padding: 0.5em 0.8em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.3em;
+    border-radius: 0.8em;
+    background-color: var(--box-color);
+
+    span {
+        cursor: pointer;
+        user-select: none;
+        color: var(--highlight-color);
+        padding: 0.3em;
+        border-radius: 1em;
+
+        &:hover {
+            background-color: var(--hover-color);
+        }
+    }
+}

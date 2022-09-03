@@ -1,5 +1,6 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
+import { permissions } from "$lib/configuration";
 import { menuOpen } from "$lib/nav/menuStore";
 
     /**
@@ -22,6 +23,9 @@ import { menuOpen } from "$lib/nav/menuStore";
         <div class="buttons">
             <h2 on:click={() => closeMenu('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
             <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
+            {#if $permissions.includes('view.admin.panel')}
+            <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">shield</span>Admin Panel</h2>
+            {/if}
         </div>
 
         <!-- Buttons in the bottom left -->

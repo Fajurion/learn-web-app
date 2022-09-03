@@ -1,5 +1,6 @@
 <script lang="ts">
 import "$lib/styles/components.scss"
+import "$lib/styles/copy.scss"
 import { basePath, formOpen, getToken, postRequest, requesting } from "$lib/configuration"
 import { onMount } from "svelte";
 import { showNotification } from "$lib/components/notificationStore";
@@ -281,28 +282,6 @@ function deactivation() {
 
         span {
             color: var(--highlight-color);
-        }
-    }
-
-    .copy {
-        padding: 0.5em;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.3em;
-        border-radius: 0.4em;
-        background-color: var(--box-color);
-
-        span {
-            cursor: pointer;
-            user-select: none;
-            color: var(--highlight-color);
-            padding: 0.3em;
-            border-radius: 1em;
-
-            &:hover {
-                background-color: var(--hover-color);
-            }
         }
     }
 
