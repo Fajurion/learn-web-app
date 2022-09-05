@@ -24,7 +24,7 @@ import { menuOpen } from "$lib/nav/menuStore";
             <h2 on:click={() => closeMenu('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
             <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
             {#if $permissions.includes('view.admin.panel')}
-            <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">shield</span>Admin Panel</h2>
+            <h2 on:click={() => closeMenu('/app/admin/')}><span style="font-size: 30px;" class="material-icons">shield</span>Admin Panel</h2>
             {/if}
         </div>
 

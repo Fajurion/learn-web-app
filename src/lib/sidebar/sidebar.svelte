@@ -163,12 +163,11 @@ import { listTasks, resetNew, taskFilterDifficulty, taskFilterSorting, taskSearc
     {#if !search || (search && topic.name.startsWith(searchQuery))}
 
     <!-- Topic container -->
-    <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}"
-     on:click={() => clickTopic(topic.id)}>
-        <p><span class="material-icons">feed</span>{topic.name}</p>
+    <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}">
+        <p on:click={() => clickTopic(topic.id)}><span class="material-icons">feed</span>{topic.name}</p>
 
         <!-- Delete / go into topic button -->
-        <div on:mouseenter={() => childHovered = true} on:mouseleave={() => childHovered = false} class="toolbar">
+        <div class="toolbar">
 
             <!-- Only show if topic has children -->
             {#if topic.category}
@@ -339,7 +338,8 @@ import { listTasks, resetNew, taskFilterDifficulty, taskFilterSorting, taskSearc
         p {
             display: flex;
             align-items: center;
-            gap: 0.6em;
+            gap: 0.3em;
+            width: 100%;
 
             span {
                 color: var(--highlight-color);

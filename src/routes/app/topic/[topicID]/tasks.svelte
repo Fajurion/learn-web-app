@@ -1,7 +1,5 @@
 <script lang="ts">
-import { showNotification } from "$lib/components/notificationStore";
-import { scale, fly, slide } from "svelte/transition";
-import { getToken, postRequest } from "$lib/configuration";
+import { scale, fly } from "svelte/transition";
 import { currentTopic } from "$lib/sidebar/topics";
 import { onMount } from "svelte";
 import { addForm } from '$lib/posts/posts';

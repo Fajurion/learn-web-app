@@ -28,6 +28,7 @@ import SettingsMenu from "$lib/account/settingsMenu.svelte";
 import { formOpen, formTitle } from "$lib/configuration";
 import Permissions from "$lib/account/settings/permissions.svelte";
 import Invite from "$lib/account/settings/invite.svelte";
+import ReportMenu from "$lib/account/menus/reportMenu.svelte";
 
     page.subscribe(() => {
         sidebarOpen.set(false)
@@ -57,6 +58,8 @@ import Invite from "$lib/account/settings/invite.svelte";
         <Permissions />
         {:else if $formTitle === 'Einladen'}
         <Invite />
+        {:else if $formTitle === 'Melden'}
+        <ReportMenu />
         {/if}
     </div>
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { addForm } from "$lib/posts/posts";
-import { currentTopic } from "$lib/sidebar/topics";
+import { currentTopic, topicList } from "$lib/sidebar/topics";
 import { slide } from "svelte/transition";
 import { page } from "$app/stores";
 import { goto } from "$app/navigation";

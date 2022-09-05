@@ -2,13 +2,13 @@ import { writable } from "svelte/store";
 import { getToken, basePath, postRequest } from "$lib/configuration"
 import { showNotification } from "$lib/components/notificationStore";
 
-export let currentTopic = writable({})
+export let currentTopic = writable<any>({})
 
-export let topicList = writable([])
+export let topicList = writable<any[]>([])
 export let path = ''
 
 // Caching
-export let map = new Map<number, []>()
+export let map = new Map<number, any[]>()
 export let parentMap = new Map<number, number>()
 
 /**

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { page } from "$app/stores";
-import { getToken, postRequest, requesting, requestURL } from "$lib/configuration";
+import { formOpen, formTitle, getToken, postRequest, requesting, requestURL } from "$lib/configuration";
 import { onMount } from "svelte";
 
 import "$lib/styles/components.scss"
@@ -47,6 +47,36 @@ import { goto } from "$app/navigation";
         }
     }
 
+    function likeButton() {
+        if($requesting) return
+        currentTask.liked = !currentTask.liked
+
+        // If liked
+        if(currentTask.liked) {
+
+            // then like the post
+            postRequest('/api/task/like', {
+                token: getToken(),
+                task: currentTask.id
+            }, (json: any) => {
+                if(!json.success) {
+                    currentTask.liked = !currentTask.liked
+                }
+            })
+        } else { // if not liked
+
+            // then unlike the post
+            postRequest('/api/task/unlike', {
+                token: getToken(),
+                task: currentTask.id
+            }, (json: any) => {
+                if(!json.success) {
+                    currentTask.liked = !currentTask.liked
+                }
+            })
+        }
+    }
+
 </script>
 
 <div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
@@ -59,7 +89,7 @@ import { goto } from "$app/navigation";
 
     {#if !$requesting && currentTask == null}
     <div in:fly style="margin-top: 5em;" class="cc">
-        <h2>Dises Aufgabe wurde nicht gefunden!</h2>
+        <h2>Diese Aufgabe wurde nicht gefunden!</h2>
     </div>
     {/if}
 
@@ -67,9 +97,14 @@ import { goto } from "$app/navigation";
     <div in:fly class="rect row">
         <h3 class="cc cc-gap"><span class="material-icons colored">task</span>{currentTask.title}</h3>
 
-        <div class="tools">
-            <p class="b-tooltip" data-ttext="Bewerten"><span class="material-icons clickable">favorite</span></p>
-            <p class="b-tooltip" data-ttext="Melden"><span class="material-icons clickable">report</span></p>
+        <div class="tools cc-gap">
+            <p class="b-tooltip" data-ttext="Bewerten"><span on:click={likeButton} class="material-icons clickable 
+                {currentTask.liked ? 'selected' : ''}">favorite</span></p>
+
+            <p class="b-tooltip" data-ttext="Melden"><span on:click={() => {
+                formOpen.set(true)
+                formTitle.set('Melden')
+            }} class="material-icons clickable">report</span></p>
         </div>
     </div>
 
@@ -92,8 +127,12 @@ import { goto } from "$app/navigation";
                 <h2>GUT GEMACHT!</h2>
 
                 <div style="margin-top: 0.5em;" class="cc cc-gap">
-                    <span class="material-icons clickable">favorite</span>
-                    <span class="material-icons clickable">report</span>
+                    <span on:click={likeButton} class="material-icons clickable {currentTask.liked ? 'selected' : ''}">favorite</span>
+
+                    <span on:click={() => {
+                        formOpen.set(true)
+                        formTitle.set('Melden')
+                    }} class="material-icons clickable">report</span>
                     <span on:click={() => goto('/app/topic/' + currentTask.topic + "/tasks")} class="material-icons clickable">arrow_forward</span>
                 </div>
             </div>
@@ -110,8 +149,13 @@ import { goto } from "$app/navigation";
         <p style="margin-top: 0.4em;">{currentTask.explanation}</p>
 
         <div style="margin-top: 0.5em;" class="tools cc-gap">
-            <span class="material-icons clickable">favorite</span>
-            <span class="material-icons clickable">report</span>
+            <span on:click={likeButton} class="material-icons clickable {currentTask.liked ? 'selected' : ''}">favorite</span>
+
+            <span class="material-icons clickable" on:click={() => {
+                formOpen.set(true)
+                formTitle.set('Melden')
+            }}>report</span>            
+            
             <span on:click={() => goto('/app/topic/' + currentTask.topic + "/tasks")} class="material-icons clickable">arrow_forward</span>
         </div>
     </div>
@@ -182,7 +226,7 @@ import { goto } from "$app/navigation";
         width: max-content;
         font-size: 18px;
         cursor: pointer;
-        margin: 0.4em;
+        margin: 0.2em;
         padding: 0.6em 1.2em;
         border-radius: 0.5em;
         background-color: var(--box-color);
@@ -210,8 +254,7 @@ import { goto } from "$app/navigation";
 
     .answers {
         display: flex;
-        justify-content: space-evenly;
-        flex-wrap: wrap;
+        flex-direction: column;
     }
 
     button {
