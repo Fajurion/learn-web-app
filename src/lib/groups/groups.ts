@@ -4,9 +4,9 @@ import { writable } from "svelte/store";
 
 export let searchQuery = writable('')
 
-export let currentGroup = writable({})
+export let currentGroup = writable<any>({})
 export let requesting = writable(false)
-export let groupList = writable([])
+export let groupList = writable<any[]>([])
 export let addForm = writable(false)
 
 /**
@@ -62,7 +62,7 @@ export function listGroups(query: string) {
         if(!json.success) return
 
         // Sort groups due to unsorting on the server
-        json.groups.sort(function(a, b){return a.id - b.id})
+        json.groups.sort(function(a: any, b: any){return a.id - b.id})
 
         // Set group list
         groupList.set(json.groups)
@@ -93,7 +93,7 @@ export function retrieveGroup(id: number) {
             id: id,
             member: json.member,
             creator: json.creator,
-            members: json.members.sort(function(a,b){return b.id - a.id})
+            members: json.members.sort(function(a: any,b: any){return b.id - a.id})
         })
     })
     

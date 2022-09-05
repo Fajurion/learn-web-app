@@ -5,7 +5,7 @@ import { writable } from "svelte/store";
 export let hadError = writable(false) // if request had an error
 export let currentPage = writable(0) // current page of post section
 
-export let postList = writable([]) // List of posts on current page
+export let postList = writable<any[]>([]) // List of posts on current page
 
 export let addForm = writable(false) // if adding post/task form is open or not
 

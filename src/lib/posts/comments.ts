@@ -3,8 +3,8 @@ import { getToken, postRequest } from "$lib/configuration";
 import { writable } from "svelte/store";
 import { customFormat } from "./posts";
 
-export let currentPost = writable({})
-export let currentComments = writable([])
+export let currentPost = writable<any>({})
+export let currentComments = writable<any[]>([])
 
 export let createComment = writable(false)
 
@@ -62,9 +62,9 @@ export function loadComments(post: number, callback: any) {
         // Format dates
         let newArray: any[] = []
 
-        json.comments.sort(function(a,b){return a.date - b.date})
+        json.comments.sort(function(a: any,b: any){return a.date - b.date})
 
-        json.comments.forEach(element => {
+        json.comments.forEach((element: any) => {
             element.date = customFormat(new Date(element.date), "#DD#.#MM#.#YYYY#")
             newArray.push(element)
         });

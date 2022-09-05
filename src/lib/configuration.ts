@@ -4,7 +4,7 @@ import { showNotification } from "./components/notificationStore"
 
 export let requesting = writable(false)
 export let requestURL = writable(' ')
-export let permissions = writable([])
+export let permissions = writable<any[]>([])
 
 export let formOpen = writable(false)
 export let formTitle = writable("")
