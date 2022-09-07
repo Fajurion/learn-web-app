@@ -12,10 +12,9 @@ import { slide } from "svelte/transition";
 
 <div in:slide={{duration: 250, delay: 250}} out:slide={{duration: 250}} class="bar">
     <div class="items">
-        <a href="/app/admin" class="item {($page.url.pathname.split('/')[3] || '') === '' ? 'selected' : ''}">Statistiken</a>
-        <a href="/app/admin/accounts" class="item {($page.url.pathname.split('/')[3] || '') === 'accounts' ? 'selected' : ''}">Konten</a>
+        <a href="/app/admin/" class="item {($page.url.pathname.split('/')[3] || '') === '' ? 'selected' : ''}">Konten</a>
         <a href="/app/admin/reports" class="item {($page.url.pathname.split('/')[3] || '') === 'reports' ? 'selected' : ''}">Meldungen</a>
-        <a href="/app/admin/info" class="item {($page.url.pathname.split('/')[3] || '') === 'info' ? 'selected' : ''}">Einladungen</a>
+        <a href="/app/admin/invites" class="item {($page.url.pathname.split('/')[3] || '') === 'invites' ? 'selected' : ''}">Einladungen</a>
         <a href="/app/admin/ranks" class="item {($page.url.pathname.split('/')[3] || '') === 'ranks' ? 'selected' : ''}">Ränge</a>
     </div>
 </div>
@@ -33,7 +32,7 @@ import { slide } from "svelte/transition";
         align-items: center;
         justify-content: center;
         background-color: var(--menu-color);
-        padding: 1em 0em;
+        padding: 0.6em 0em;
     }
 
     .panel {
@@ -62,6 +61,14 @@ import { slide } from "svelte/transition";
         &:hover {
             background-color: var(--hover-color);
         }
+    }
+
+    .items {
+        padding: 0em 1em;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5em;
     }
 
     .selected {

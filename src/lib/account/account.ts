@@ -1,9 +1,9 @@
 import { getToken, permissions, postRequest } from "$lib/configuration";
 import { writable } from "svelte/store";
 
-export const accountData = writable({})
-export const groupList = writable([])
-export const testList = writable([])
+export const accountData = writable<any>({})
+export const groupList = writable<any[]>([])
+export const testList = writable<any[]>([])
 
 export function refreshAccount() {
     postRequest('/api/start', {

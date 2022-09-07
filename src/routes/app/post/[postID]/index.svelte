@@ -7,7 +7,7 @@ import "$lib/styles/components.scss"
 import "$lib/styles/form.scss"
 import Textarea from "$lib/components/textarea.svelte";
 import { likePost, unlikePost } from "$lib/posts/likes";
-import { permissions, requesting } from "$lib/configuration";
+import { formOpen, formTitle, permissions, requesting } from "$lib/configuration";
 
     // Variable for value of comment in comment add form
     let comment = ''
@@ -112,7 +112,10 @@ import { permissions, requesting } from "$lib/configuration";
                 <span class="material-icons clickable">delete</span>
                 {/if}
 
-                <span class="material-icons clickable">report</span>
+                <span class="material-icons clickable" on:click={() => {
+                    formOpen.set(true)
+                    formTitle.set('Melden')
+                }}>report</span>
 
             </div>
         </div>

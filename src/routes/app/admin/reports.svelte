@@ -92,6 +92,9 @@ let currentOffset = 0, currentOpen = 0
                 <button on:click={() => {
                     window.open(report.url, '_blank')
                 }}>Öffnen</button>
+
+                <button on:click={() => window.open('/app/users/' + report.creator, '_blank')}>Ersteller</button>
+
                 <button on:click={() => deleteReport(report)}>Löschen</button>
             </div>
         </div>

@@ -8,7 +8,6 @@
     import "$lib/styles/input.scss"
     import { groupList, refreshAccount } from "$lib/account/account";
     import { formOpen, formTitle } from "$lib/configuration";
-import { page } from "$app/stores";
 
     let questionOpen = ''
 
