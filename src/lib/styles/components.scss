@@ -58,10 +58,6 @@
         padding: 1.2em;
         flex-direction: column;
 
-        p {
-
-        }
-
         .element {
             cursor: pointer;
             display: flex;
@@ -82,6 +78,20 @@
         }
 
     }
+
+    .vertical-small {
+        display: flex;
+        gap: 0.5em;
+        margin: 0.6em 0.3em;
+        background-color: var(--menu-color);
+        border-radius: 1em;
+        padding: 0.4em 1.2em;
+        flex-direction: column;
+    }
+}
+
+.colored {
+    color: var(--highlight-color);
 }
 
 .loading {

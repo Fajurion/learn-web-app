@@ -7,6 +7,9 @@ import { onMount } from "svelte";
     // Variable for the placeholder of the textarea
     export let placeholder = ''
 
+    // Variable for blocking the field
+    export let blocked = false
+
     // Expand on startup
     onMount(() => {
         expand()
@@ -27,7 +30,7 @@ import { onMount } from "svelte";
 </script>
 
 <!-- Text area -->
-<textarea id="textarea" placeholder={placeholder} on:input={expand} bind:value />
+<textarea class="{blocked ? 'blocked' : ''}" id="textarea" placeholder={placeholder} on:input={expand} bind:value />
 
 <style>
 	
@@ -41,7 +44,13 @@ import { onMount } from "svelte";
         font-size: 18px;
         border-radius: 0.3em;
         background-color: var(--menu-color);
+        border: 2px solid var(--menu-color);
         color: var(--text-color);
+        transition: border 250ms ease;
 	}
+
+    .blocked {
+        border: 2px solid red;
+    }
 	
 </style>

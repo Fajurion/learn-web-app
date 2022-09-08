@@ -164,7 +164,7 @@ import { listTasks, resetNew, taskFilterDifficulty, taskFilterSorting, taskSearc
 
     <!-- Topic container -->
     <div class="topic {$page.params.topicID && $page.params.topicID == topic.id ? 'selected' : ''}">
-        <p on:click={() => clickTopic(topic.id)}><span class="material-icons">feed</span>{topic.name}</p>
+        <p on:click={() => clickTopic(topic.id)}><span class="material-icons">topic</span>{topic.name}</p>
 
         <!-- Delete / go into topic button -->
         <div class="toolbar">

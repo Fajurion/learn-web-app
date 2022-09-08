@@ -66,7 +66,7 @@ function likeButton(post: any) {
 
 function changeLikeState(post: any, state: boolean | undefined) {
 
-    let newArray: never[] = $postList
+    let newArray: any[] = $postList
 
     newArray.forEach(element => {
 

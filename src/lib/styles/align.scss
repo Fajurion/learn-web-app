@@ -11,6 +11,11 @@
     flex-direction: column;
 }
 
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
 .row {
     display: flex;
     align-items: center;
@@ -23,6 +28,10 @@
 
 .cc-space {
     gap: 0.5em;
+}
+
+.cc-biggap {
+    gap: 0.6em;
 }
 
 .flex {

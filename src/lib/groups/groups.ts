@@ -1,5 +1,6 @@
 import { showNotification } from "$lib/components/notificationStore";
 import { getToken, postRequest } from "$lib/configuration";
+import { customFormat } from "$lib/posts/posts";
 import { writable } from "svelte/store";
 
 export let searchQuery = writable('')
@@ -8,6 +9,9 @@ export let currentGroup = writable<any>({})
 export let requesting = writable(false)
 export let groupList = writable<any[]>([])
 export let addForm = writable(false)
+export let addExamForm = writable(false)
+
+export let currentExamMap = writable<Map<string, any>>()
 
 /**
  * Create a new group
@@ -85,6 +89,11 @@ export function retrieveGroup(id: number) {
         // Return if request wasn't successful
         if(!json.success) return;
 
+        // Add dates
+        json.exams.forEach((element: any) => {
+            element.date = customFormat(new Date(element.date), "#DD#.#MM#.#YYYY#")
+        });
+
         // Set group
         currentGroup.set({
             name: json.name,
@@ -93,8 +102,25 @@ export function retrieveGroup(id: number) {
             id: id,
             member: json.member,
             creator: json.creator,
-            members: json.members.sort(function(a: any,b: any){return b.id - a.id})
+            members: json.members.sort((a: any,b: any) => {return b.id - a.id}),
+            exams: json.exams
         })
+
+        // Sort in map
+        const newMap = new Map<string, any>()
+
+        // Add values
+        json.exams.forEach((element: any) => {
+
+            if(newMap.has(element.date)) {
+                newMap.get(element.date).push(element)
+            } else {
+
+                newMap.set(element.date, [element])
+            }
+        })
+
+        currentExamMap.set(newMap)
     })
     
 }

@@ -29,6 +29,9 @@ import { formOpen, formTitle } from "$lib/configuration";
 import Permissions from "$lib/account/settings/permissions.svelte";
 import Invite from "$lib/account/settings/invite.svelte";
 import ReportMenu from "$lib/account/menus/reportMenu.svelte";
+import { selectionType } from "$lib/components/selector/selectorStore";
+import TopicSelector from "$lib/components/selector/topicSelector.svelte";
+import FileSelector from "$lib/components/selector/fileSelector.svelte";
 
     page.subscribe(() => {
         sidebarOpen.set(false)
@@ -60,6 +63,14 @@ import ReportMenu from "$lib/account/menus/reportMenu.svelte";
         <Invite />
         {:else if $formTitle === 'Melden'}
         <ReportMenu />
+        {:else if $formTitle === 'Auswählen'}
+
+        {#if $selectionType === 'file'}
+        <FileSelector />
+        {:else if $selectionType === 'topic'}
+        <TopicSelector />
+        {/if}
+
         {/if}
     </div>
 </div>

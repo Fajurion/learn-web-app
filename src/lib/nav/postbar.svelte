@@ -15,7 +15,7 @@ import "$lib/styles/tooltip.scss"
 <div in:slide={{duration: 200, delay: 250}} out:slide={{duration: 200}} class="bar">
 
     <!-- Text with current topic -->
-    <p><span class="material-icons">feed</span>{$currentTopic.name}</p>
+    <p><span class="material-icons">topic</span>{$currentTopic.name}</p>
 
     <!-- Selection of what to view -->
     <div class="nav">

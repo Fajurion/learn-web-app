@@ -1,5 +1,4 @@
 input {
-    margin-top: 10px;
     outline: none;
     border: none;
     font-size: 18px;
@@ -26,6 +25,14 @@ button {
     &:hover {
         background-color: var(--hover-color);
     }
+}
+
+.blocked {
+    pointer-events: none;
+}
+
+.blocked-text {
+    color: red;
 }
 
 .darker {

@@ -17,7 +17,7 @@ import "$lib/styles/components.scss"
             editDescriptionForm.set(true)
             newDescription.set($currentGroup.description)
 
-        }} style="font-size: 27px;" class="material-icons">edit</span>
+        }} style="font-size: 27px;" class="material-icons clickable">edit</span>
         {/if}
     </div>
 
@@ -41,7 +41,24 @@ import "$lib/styles/components.scss"
 </div>
 
 <div class="container">
-    <h2>Klassenarbeiten</h2>
+
+    <div class="row">
+        <h2>Klassenarbeiten</h2>
+        <span on:click={() => goto('/app/groups/' + $currentGroup.id + "/exams")} style="font-size: 27px;"
+             class="material-icons clickable">arrow_forward</span>
+    </div>
+
+    {#if $currentGroup.exams}
+
+    {#if !$currentGroup.exams[0]}
+    <div class="horizontal cc">
+        <div class="element">
+            <span style="font-size: 50px;" class="material-icons">add_circle</span>
+            <p style="margin-top: 10px;">Hinzufügen</p>
+        </div>
+    </div>
+
+    {:else}
 
     <div class="horizontal">
         <div class="element">
@@ -59,6 +76,10 @@ import "$lib/styles/components.scss"
             <p>5. Latein KA</p>
         </div>
     </div>
+
+    {/if}
+
+    {/if}
 </div>
 
 <div class="container">
@@ -82,17 +103,17 @@ import "$lib/styles/components.scss"
         display: flex;
         align-items: center;
         justify-content: space-between;
+    }
 
-        span {
-            padding: 0.3em;
-            background-color: var(--box-color);
-            border-radius: 1em;
-            transition: 250ms ease;
-            cursor: pointer;
+    .clickable {
+        padding: 0.3em;
+        border-radius: 1em;
+        transition: 250ms ease;
+        cursor: pointer;
 
-            &:hover {
-                color: var(--highlight-color);
-            }
+        &:hover {
+            color: var(--highlight-color);
+            background-color: var(--hover-color);
         }
     }
 
