@@ -1,20 +1,31 @@
 <script lang="ts">
 import { page } from '$app/stores'
-import Textarea from '$lib/components/textarea.svelte';
 import { likeCache, likePost, unlikePost } from '$lib/posts/likes';
-import { loadPosts, postList, createPost, addForm, currentPage } from '$lib/posts/posts';
+import { loadPosts, postList, createPost, addForm, currentPage, uploading, uploadStatus } from '$lib/posts/posts';
 import { onMount } from 'svelte';
 import { fly, scale } from "svelte/transition"
 import "$lib/styles/components.scss"
 import "$lib/styles/tooltip.scss"
+import "$lib/styles/align.scss"
+import "$lib/styles/form.scss"
 import { goto } from '$app/navigation';
-import { requesting, requestURL } from '$lib/configuration';
+import { formOpen, formTitle, requesting, requestURL } from '$lib/configuration';
+import BetterTextarea from '$lib/components/text/betterTextarea.svelte';
+import { selectionResult, selectionType } from '$lib/components/selector/selectorStore';
+import { onDestroy } from 'svelte';
+import { showNotification } from '$lib/components/notificationStore';
+import { uploadDone, uploadedImage, uploadFailed, uploadPicture } from '$lib/posts/images';
+import AdvancedTextRender from '$lib/render/advancedTextRender.svelte';
 
 onMount(() => init())
 
 let filter = 0
 let query = ''
 let content: string = '', title: string = ''
+
+let images: any[] = []
+
+let unsub: any = () => {}
 
 function init() {
 
@@ -27,12 +38,131 @@ function init() {
     }
 
     loadPosts(query, filter, parseInt($page.params.topicID), $currentPage)
+
+    unsub = selectionResult.subscribe(() => {
+        if($selectionResult == undefined) return
+
+        if(images.includes($selectionResult)) {
+            showNotification('Diese Datei hast du bereits hochgeladen!', 'red', 5000)
+            selectionResult.set(undefined)
+            return
+        }
+
+        if(images[0]) {
+            images.push($selectionResult)
+            images = images
+        } else images = [$selectionResult]
+
+        selectionResult.set(undefined)
+    })
 }
 
-function submitPost() {
-    
-    createPost(parseInt($page.params.topicID), title, content)
+let currentImage = 0
 
+function submitPost() {
+
+    let img: any[] = []
+    content.split('\n').forEach(s => {
+        if(s.startsWith('@image:')) {
+
+            images.forEach(image => {
+                
+                if(s.split(':')[1] == images.indexOf(image) + '') {
+                    if(img[0] != undefined) img.push(image)
+                    else img = [image]
+                }
+
+            })
+
+        }
+    })
+
+    if(!checkArray(img, images)) {
+        showNotification('Es wurden nicht alle Bilder eingebunden!', 'red', 2000)
+        return
+    }
+    
+    if(img.length > 0) {
+        uploading.set(true)
+
+        // Upload first image
+        nextImage()
+
+        const done = uploadDone.subscribe(() => {
+            if(!$uploadDone) return
+
+            // Add image id
+            content = content.replace('@image:' + currentImage, '@image:' + $uploadedImage)
+
+            // Check if there is another image
+            if(images.length > 0) {
+
+                nextImage()
+            } else {
+
+                // Submit post
+                createPost(parseInt($page.params.topicID), title, content, false)
+
+                uploadStatus.set('Der Beitrag wurde erfolgreich veröffentlicht!')
+
+                end(done, failed)
+            }
+
+        })
+
+        const failed = uploadFailed.subscribe(() => {
+            if(!$uploadFailed) return
+
+            uploadStatus.set('Das Hochladen ist fehlgeschlagen!')
+
+            end(done, failed)
+        })
+
+    } else {
+        createPost(parseInt($page.params.topicID), title, content, true)
+    }
+    
+}
+
+function reset() {
+    images = []
+    content = ''
+    title = ''
+}
+
+function end(done: any, failed: any) {
+    setTimeout(() => {
+
+        // Unsubscribe from stores
+        done()
+        failed()
+
+        // Close form
+        addForm.set(false)
+        reset()
+        uploading.set(false)
+    }, 5000);
+}
+
+function nextImage() {
+    uploadDone.set(false)
+    uploadFailed.set(false)
+    uploadPicture(images[currentImage])
+    images.splice(currentImage, 1)
+}
+
+function checkArray(array1: any[], array2: any[]) {
+  if (array1.length === array2.length) {
+    return array1.every((element, index) => {
+      if (element === array2[index]) {
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  return false;
 }
 
 function nextPage() {
@@ -63,6 +193,8 @@ function likeButton(post: any) {
     }
 
 }
+
+onDestroy(() => unsub)
 
 function changeLikeState(post: any, state: boolean | undefined) {
 
@@ -98,17 +230,73 @@ function updateQuery() {
 
 {#if $addForm}
 <div in:scale out:scale class="center-form">
+
+    {#if !$uploading}
     <div class="form">
         <p>Beitrag erstellen</p>
 
         <input bind:value={title} type="title" placeholder="Titel">
-        <Textarea bind:value={content} placeholder="Text"/>
+        <BetterTextarea bind:value={content} placeholder="Text"/>
+
+        <span class="material-icons clickable" on:click={() => {
+            // Open image selection
+            formOpen.set(true)
+            formTitle.set('Auswählen')
+            selectionType.set('imagedd')
+        }}>image</span>
+
+        {#if images[0]}
+        <div class="flex flex-wrap cc-space">
+            {#each images as image}
+            <div class="image cc-biggap">
+                <div class="row cc-gap">
+                    <span class="material-icons colored">image</span>
+                    <p>{image.name} ({images.indexOf(image)})</p>
+                </div>
+        
+                <span class="material-icons" on:click={() => {
+                    images.splice(images.indexOf(image), 1)
+                    images = images
+                }}>close</span>
+            </div>
+            {/each}
+
+        </div>
+
+        <p style="color: var(--hidden-text-color);">Benutze um ein Bild anzuzeigen @image: und danach
+            die Nummer in den Klammern. Das Bild wird erst im veröffentlichen Beitrag angezeigt.
+            (Der Text dafür muss am Anfang einer Zeile sein)</p>
+        {/if}
 
         <div class="row">
             <button on:click={submitPost} style="margin-top: 20px;">Erstellen</button>
             <button on:click={() => addForm.set(false)}>Zurück</button>
         </div>
     </div>
+
+    {:else}
+
+    <div class="form small-form">
+
+        {#if $uploadStatus === ''}
+
+        <div class="cc">
+            <span style="font-size: 80px;" class="material-icons loading">hourglass_empty</span>
+        </div>
+
+        {:else}
+
+        <div class="cc">
+            <span style="font-size: 80px; color: lightgreen;" class="material-icons">done_all</span>
+        </div>
+
+        {/if}
+
+        <h4>{$uploadStatus}</h4>
+        <p style="color: var(--hidden-text-color);">Bitte verlasse diese Seite nicht!</p>
+    </div>
+
+    {/if}
 </div>
 {/if}
 
@@ -160,23 +348,7 @@ function updateQuery() {
             </div>
             <h2 on:click={() => goto('/app/post/' + post.id)}>{post.title}</h2>
             <div on:click={() => goto('/app/post/' + post.id)} class="content">
-            {#each post.content.split('\n') as line}
-
-                {#if line.startsWith('# ')}
-
-                <h3>{line.replace('# ', '')}</h3>
-
-                {:else if line === ' ...'}
-
-                <strong>Klicke auf den Beitrag um mehr zu lesen.</strong>
-
-                {:else}
-
-                <p>{line} <br></p>
-
-                {/if}
-
-            {/each}
+            <AdvancedTextRender text={post.content} />
             </div>
     
             <div class="postbar">
@@ -233,20 +405,6 @@ function updateQuery() {
     .hidden {
         opacity: 0;
     }
-    
-    .center-form {
-        z-index: 1;
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 0.5em;
-        width: 100%;
-        height: 100%;
-    }
 
     .center {
         margin-top: 30vh;
@@ -300,25 +458,17 @@ function updateQuery() {
         }
     }
 
-    .form {
-        display: flex;
-        justify-content: center;
-        padding: 2em;
+    .clickable {
+        padding: 0.3em;
         border-radius: 1em;
-        background-color: var(--box-color);
-        flex-direction: column;
-        width: 1000px;
-        max-width: 85%;
-        gap: 0.5em;
-        overflow-y: scroll;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
+        width: max-content;
+        cursor: pointer;
 
-    .form::-webkit-scrollbar {
-        display: none;
+        &:hover {
+            background-color: var(--hover-color);
+            color: var(--highlight-color);
+        }
     }
-
 
     .postbar {
         padding: 0.3em;
@@ -472,6 +622,25 @@ function updateQuery() {
             cursor: pointer;
             user-select: none;
         }
+    }
+
+    .image {
+        width: max-content;
+        padding: 0.6em;
+        border-radius: 0.5em;
+        background-color: var(--menu-color);
+
+        display: flex;
+        align-items: center;
+
+        span:hover {
+            cursor: pointer;
+            color: var(--highlight-color);
+        }
+    }
+
+    span {
+        user-select: none;
     }
 
 </style>

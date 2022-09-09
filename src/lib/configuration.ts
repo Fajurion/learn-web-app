@@ -10,6 +10,7 @@ export let formOpen = writable(false)
 export let formTitle = writable("")
 
 export const basePath = 'http://localhost:8880'
+export const maxFileSize = 4000*1000;
 
 export function getToken() {
     return cookie.parse(document.cookie).token

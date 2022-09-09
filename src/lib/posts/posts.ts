@@ -9,6 +9,9 @@ export let postList = writable<any[]>([]) // List of posts on current page
 
 export let addForm = writable(false) // if adding post/task form is open or not
 
+export let uploading = writable(false) // if the post is currently uploading
+export let uploadStatus = writable('') // the current upload status
+
 //*** This code is copyright 2002-2016 by Gavin Kistner, !@phrogz.net
 //*** It is covered under the license viewable at http://phrogz.net/JS/_ReuseLicense.txt
 // (only this function)
@@ -80,7 +83,7 @@ export function loadPosts(query: string, filter: number, topic: number, page: nu
  * @param title title of the post
  * @param content content of the post
  */
-export function createPost(topic: number, title: string, content: string) {
+export function createPost(topic: number, title: string, content: string, close: boolean | undefined) {
     
     // Send a request to the server
     postRequest('/api/post/create', { // Body of the request
@@ -117,6 +120,9 @@ export function createPost(topic: number, title: string, content: string) {
 
         // Send notification and close adding post form
         showNotification('Dein Beitrag wurde erstellt!', 'green', 2000)
-        addForm.set(false)
+
+        if(close) {
+            addForm.set(true)
+        }
     })
 }

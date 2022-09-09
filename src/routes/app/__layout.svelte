@@ -6,7 +6,7 @@ import Notification from "$lib/components/notification.svelte";
 import Menu from "$lib/nav/menu.svelte";
 import { sidebarOpen, accountOpen } from "$lib/nav/menuStore";
 
-    export const load: Load = ({session}) => {
+    export const load: Load = ({session}: any) => {
     
     if(!session.user) {
         return {
@@ -31,7 +31,7 @@ import Invite from "$lib/account/settings/invite.svelte";
 import ReportMenu from "$lib/account/menus/reportMenu.svelte";
 import { selectionType } from "$lib/components/selector/selectorStore";
 import TopicSelector from "$lib/components/selector/topicSelector.svelte";
-import FileSelector from "$lib/components/selector/fileSelector.svelte";
+import ImageDrop from "$lib/components/selector/imageDrop.svelte";
 
     page.subscribe(() => {
         sidebarOpen.set(false)
@@ -65,8 +65,8 @@ import FileSelector from "$lib/components/selector/fileSelector.svelte";
         <ReportMenu />
         {:else if $formTitle === 'Auswählen'}
 
-        {#if $selectionType === 'file'}
-        <FileSelector />
+        {#if $selectionType === 'imagedd'}
+        <ImageDrop />
         {:else if $selectionType === 'topic'}
         <TopicSelector />
         {/if}

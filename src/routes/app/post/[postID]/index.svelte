@@ -8,6 +8,7 @@ import "$lib/styles/form.scss"
 import Textarea from "$lib/components/textarea.svelte";
 import { likePost, unlikePost } from "$lib/posts/likes";
 import { formOpen, formTitle, permissions, requesting } from "$lib/configuration";
+import AdvancedTextRender from "$lib/render/advancedTextRender.svelte";
 
     // Variable for value of comment in comment add form
     let comment = ''
@@ -121,19 +122,7 @@ import { formOpen, formTitle, permissions, requesting } from "$lib/configuration
         </div>
         
         <div class="vertical">
-            {#each $currentPost.content.split('\n') as line}
-
-                {#if line.startsWith('# ')}
-                <h3>{line.replace('# ', '')}</h3>
-
-                {:else if line === ' ...'}
-                <strong>Klicke auf den Beitrag um mehr zu lesen.</strong>
-
-                {:else}
-                <p>{line} <br></p>
-                {/if}
-
-            {/each}
+            <AdvancedTextRender goToPost={false} text={$currentPost.content} />
         </div>
 
         <!-- Bar for (un-)liking -->
