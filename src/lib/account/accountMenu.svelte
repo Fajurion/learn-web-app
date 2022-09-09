@@ -30,14 +30,14 @@ import { formOpen, formTitle } from "$lib/configuration";
 
 <div class="bar">
     <div class="title">
-        <div class="column clickable-column b-tooltip" data-ttext="Zu deinem Profil" on:click={() => clickLink('/app/users/' + $accountData.id)}>
+        <div class="flex cc-gap clickable-column b-tooltip" data-ttext="Zu deinem Profil" on:click={() => clickLink('/app/users/' + $accountData.id)}>
             <span class="material-icons">person</span>
             <p>{$accountData.username}</p>
         </div>
 
         <div class="toolbar">
-            <span style="font-size: 26px;" class="material-icons clickable">notifications</span>
-            <span on:click={() => chatOpen.set(!$chatOpen)} style="font-size: 26px;" class="material-icons clickable {$chatOpen ? 'selected' : ''}">bookmark</span>
+            <!-- <span style="font-size: 26px;" class="material-icons clickable">notifications</span> -->
+            <!-- <span on:click={() => chatOpen.set(!$chatOpen)} style="font-size: 26px;" class="material-icons clickable {$chatOpen ? 'selected' : ''}">bookmark</span> -->
             <span on:click={() => {
                 formOpen.set(!$formOpen)
                 formTitle.set("Einstellungen")
@@ -85,11 +85,14 @@ import { formOpen, formTitle } from "$lib/configuration";
         z-index: 10;
     }
 
+    /*
+
     .column {
         display: flex;
         align-items: center;
         gap: 0.3em;
     }
+    */
 
     .toolbar {
         display: flex;
@@ -111,7 +114,7 @@ import { formOpen, formTitle } from "$lib/configuration";
             color: var(--highlight-color);
         }
     }
-
+    /*
     .selected {
         background-color: var(--selected-color);
         color: var(--highlight-color);
@@ -120,6 +123,7 @@ import { formOpen, formTitle } from "$lib/configuration";
             background-color: var(--selected-color);
         }
     }
+    */
 
     .clickable-column {
         cursor: pointer;

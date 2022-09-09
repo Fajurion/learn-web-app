@@ -126,3 +126,29 @@ export function createPost(topic: number, title: string, content: string, close:
         }
     })
 }
+
+export function deletePost(id: number) {
+
+    postRequest('/api/post/delete', {
+        token: getToken(),
+        post: id
+    }, (json: any) => {
+        if(!json.success) {
+
+            switch(json.message) {
+                case 'no_permission':
+                    showNotification('Du hast dafür keine Rechte!', 'red', 2000)
+                    break;
+            
+                case 'not_found':
+                    showNotification('Der Beitrag wurde nicht gefunden!', 'red', 2000)
+                    break;
+            }
+
+            return
+        }
+
+        showNotification('Der Beitrag wurde erfolgreich gelöscht!', 'red', 2000)
+    })
+
+}

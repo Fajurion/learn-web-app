@@ -358,10 +358,6 @@ function updateQuery() {
                 <p class="like-text {post.liked ? 'selected' : ''}">{parseInt(post.likes)}</p>
 
                 {#if post.created}
-                <span class="material-icons">edit</span>
-                {/if}
-
-                {#if post.created}
                 <span class="material-icons">delete</span>
                 {/if}
             </div>

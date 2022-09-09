@@ -1,7 +1,7 @@
 import { getToken, postRequest } from "$lib/configuration";
 import { writable } from "svelte/store";
 
-export let currentExam = writable<any>()
+export let currentExam = writable<any>({})
 
 /**
  * Load an exam from the backend
