@@ -9,7 +9,7 @@ import "$lib/styles/align.scss"
 
 {#if $currentExam}
 <!-- Show if exam exists -->
-<div in:slide={{duration: 200, delay: 250}} out:slide={{duration: 200}} class="bar">
+<div class="bar">
 
     <p><span class="material-icons">menu_book</span>{$currentExam.name}</p>
 

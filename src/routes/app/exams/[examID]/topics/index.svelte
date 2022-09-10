@@ -128,7 +128,7 @@ function removeTopic(id: number) {
 
 </script>
 
-<div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
+<div class="panel">
 
     <div style="margin-top: 1em;" class="container">
         <div class="row">

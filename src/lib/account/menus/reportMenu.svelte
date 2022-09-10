@@ -1,16 +1,22 @@
 <script lang="ts">
 import { page } from "$app/stores";
 import { showNotification } from "$lib/components/notificationStore";
-import { basePath, formOpen, getToken, postRequest } from "$lib/configuration";
+import { formOpen, getToken, postRequest } from "$lib/configuration";
 
 import "$lib/styles/copy.scss";
-import { onMount } from "svelte";
+import { onDestroy, onMount } from "svelte";
 let description = ''
 let link = ''
 
+let unsub: any
+
 onMount(() => {
-    link = $page.url.href
+    unsub = formOpen.subscribe(() => {
+        link = $page.url.href
+    })
 })
+
+onDestroy(() => unsub())
 
 function send() {
     postRequest("/api/report/create", {

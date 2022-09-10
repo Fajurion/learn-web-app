@@ -36,6 +36,7 @@ export function postRequest(url: string, body: any, callback: any) {
         },
         body: JSON.stringify(body) // Attach body
     }).then(async res => {
+        console.log(res)
         
         // Update requesting state
         requesting.set(false)

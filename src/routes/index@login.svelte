@@ -1,7 +1,5 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
-
-import Notification from "$lib/components/notification.svelte";
 import { showNotification } from "$lib/components/notificationStore";
 import { basePath } from "$lib/configuration";
 
@@ -29,12 +27,11 @@ import { basePath } from "$lib/configuration";
             }
 
         }).then(json => {
-            console.log(json)
 
             if(json.success) {
                 showNotification('Du wirst weitergeleitet..', 'green', 2000)
 
-                document.cookie = "token=" + json.data.split(':')[1] + "; SameSite=Strict; Secure"
+                document.cookie = "token=" + json.data.split(':')[1] + "; SameSite=Strict; Secure; path=/"
 
                 if(json.data.split(':')[0] === 'tfa') goto('/tfa')
                 else location.assign("/app")
@@ -79,6 +76,8 @@ import { basePath } from "$lib/configuration";
     main {
         width: 100%;
         height: 100%;
+        overflow: hidden;
+        overflow-y: scroll;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -93,8 +92,8 @@ import { basePath } from "$lib/configuration";
 
     .form {
         transform: 250ms ease;
-        width: 100%;
-        max-width: 400px;
+        width: 400px;
+        max-width: 100%;
         padding: 1.6em 1.2em;
         display: flex;
         flex-direction: column;

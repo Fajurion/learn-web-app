@@ -1,7 +1,7 @@
 <script lang="ts">
 import { page } from '$app/stores'
 import { likeCache, likePost, unlikePost } from '$lib/posts/likes';
-import { loadPosts, postList, createPost, addForm, currentPage, uploading, uploadStatus } from '$lib/posts/posts';
+import { loadPosts, postList, createPost, addForm, currentPage, uploading, uploadStatus, deletePost } from '$lib/posts/posts';
 import { onMount } from 'svelte';
 import { fly, scale } from "svelte/transition"
 import "$lib/styles/components.scss"
@@ -16,6 +16,8 @@ import { onDestroy } from 'svelte';
 import { showNotification } from '$lib/components/notificationStore';
 import { uploadDone, uploadedImage, uploadFailed, uploadPicture } from '$lib/posts/images';
 import AdvancedTextRender from '$lib/render/advancedTextRender.svelte';
+import Textarea from '$lib/components/textarea.svelte';
+import NotFound from '$lib/render/notFound.svelte';
 
 onMount(() => init())
 
@@ -26,6 +28,9 @@ let content: string = '', title: string = ''
 let images: any[] = []
 
 let unsub: any = () => {}
+
+let confirmDelete = false
+let deletePostID = -1
 
 function init() {
 
@@ -228,49 +233,68 @@ function updateQuery() {
 
 </script>
 
-{#if $addForm}
-<div in:scale out:scale class="center-form">
+{#if confirmDelete || $addForm}
+<div class="center-form">
 
-    {#if !$uploading}
-    <div class="form">
-        <p>Beitrag erstellen</p>
+    {#if confirmDelete}
+    <div in:scale out:scale class="form small-form">
+        <div class="content">
+            <p style="font-size: 20px;">Willst du diesen Beitrag wirklich löschen?</p>
 
-        <input bind:value={title} type="title" placeholder="Titel">
-        <BetterTextarea bind:value={content} placeholder="Text"/>
-
-        <span class="material-icons clickable" on:click={() => {
-            // Open image selection
-            formOpen.set(true)
-            formTitle.set('Auswählen')
-            selectionType.set('imagedd')
-        }}>image</span>
-
-        {#if images[0]}
-        <div class="flex flex-wrap cc-space">
-            {#each images as image}
-            <div class="image cc-biggap">
-                <div class="row cc-gap">
-                    <span class="material-icons colored">image</span>
-                    <p>{image.name} ({images.indexOf(image)})</p>
-                </div>
-        
-                <span class="material-icons" on:click={() => {
-                    images.splice(images.indexOf(image), 1)
-                    images = images
-                }}>close</span>
+            <div style="margin-top: 15px;" class="row">
+                <button on:click={() => {
+                    confirmDelete = false
+                    deletePost(deletePostID)
+                }}>Löschen</button>
+                <button on:click={() => confirmDelete = false}>Abbrechen</button>
             </div>
-            {/each}
-
         </div>
+    </div>
+    {/if}
 
-        <p style="color: var(--hidden-text-color);">Benutze um ein Bild anzuzeigen @image: und danach
-            die Nummer in den Klammern. Das Bild wird erst im veröffentlichen Beitrag angezeigt.
-            (Der Text dafür muss am Anfang einer Zeile sein)</p>
-        {/if}
+    {#if $addForm}
+    {#if !$uploading}
+    <div in:scale out:scale class="form">
+        <div class="content cc-space">
+            <p>Beitrag erstellen</p>
 
-        <div class="row">
-            <button on:click={submitPost} style="margin-top: 20px;">Erstellen</button>
-            <button on:click={() => addForm.set(false)}>Zurück</button>
+            <input bind:value={title} type="title" placeholder="Titel">
+            <Textarea bind:value={content} placeholder="Text"/>
+    
+            <span class="material-icons clickable" on:click={() => {
+                // Open image selection
+                formOpen.set(true)
+                formTitle.set('Auswählen')
+                selectionType.set('imagedd')
+            }}>image</span>
+    
+            {#if images[0]}
+            <div class="flex flex-wrap cc-space">
+                {#each images as image}
+                <div class="image cc-biggap">
+                    <div class="row cc-gap">
+                        <span class="material-icons colored">image</span>
+                        <p>{image.name} ({images.indexOf(image)})</p>
+                    </div>
+            
+                    <span class="material-icons" on:click={() => {
+                        images.splice(images.indexOf(image), 1)
+                        images = images
+                    }}>close</span>
+                </div>
+                {/each}
+    
+            </div>
+    
+            <p style="color: var(--hidden-text-color);">Benutze um ein Bild anzuzeigen @image: und danach
+                die Nummer in den Klammern. Das Bild wird erst im veröffentlichen Beitrag angezeigt.
+                (Der Text dafür muss am Anfang einer Zeile sein)</p>
+            {/if}
+
+            <div class="row">
+                <button on:click={submitPost} style="margin-top: 20px;">Erstellen</button>
+                <button on:click={() => addForm.set(false)}>Zurück</button>
+            </div>
         </div>
     </div>
 
@@ -278,29 +302,32 @@ function updateQuery() {
 
     <div class="form small-form">
 
-        {#if $uploadStatus === ''}
+        <div class="content">
+            {#if $uploadStatus === ''}
 
-        <div class="cc">
-            <span style="font-size: 80px;" class="material-icons loading">hourglass_empty</span>
+            <div class="cc">
+                <span style="font-size: 80px;" class="material-icons loading">hourglass_empty</span>
+            </div>
+    
+            {:else}
+    
+            <div class="cc">
+                <span style="font-size: 80px; color: lightgreen;" class="material-icons">done_all</span>
+            </div>
+    
+            {/if}
+    
+            <h4>{$uploadStatus}</h4>
+            <p style="color: var(--hidden-text-color);">Bitte verlasse diese Seite nicht!</p>
         </div>
-
-        {:else}
-
-        <div class="cc">
-            <span style="font-size: 80px; color: lightgreen;" class="material-icons">done_all</span>
-        </div>
-
-        {/if}
-
-        <h4>{$uploadStatus}</h4>
-        <p style="color: var(--hidden-text-color);">Bitte verlasse diese Seite nicht!</p>
     </div>
 
+    {/if}
     {/if}
 </div>
 {/if}
 
-<div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
+<div class="panel">
     
     {#if $requesting && $requestURL.includes('post') && !$addForm}
     <div class="center">
@@ -310,7 +337,8 @@ function updateQuery() {
     
     {#if !$postList[0] && !$requesting && !$addForm}
     <div in:fly class="center">
-        <h2>Keine Beiträge gefunden!</h2>
+
+        <NotFound margin="0em" text="Keine Beiträge gefunden!" />
         <div class="toolbar">
             <span on:click={init} class="material-icons">refresh</span>
             <span on:click={() => addForm.set(true)} class="material-icons">add</span>
@@ -319,7 +347,7 @@ function updateQuery() {
     {/if}
 
     <div class="container" style="margin-top: 0.4em;">
-        <div class="row">
+        <div class="row flex-wrap mobile-center-column">
             <input bind:value={query} on:input={updateQuery} placeholder="Beiträge suchen" class="scale">
 
             <div class="difficulty b-tooltip" style="margin-top: 0.65em;" data-ttext="Beiträge ordnen">
@@ -358,7 +386,10 @@ function updateQuery() {
                 <p class="like-text {post.liked ? 'selected' : ''}">{parseInt(post.likes)}</p>
 
                 {#if post.created}
-                <span class="material-icons">delete</span>
+                <span class="material-icons" on:click={() => {
+                    confirmDelete = true
+                    deletePostID = post.id
+                }}>delete</span>
                 {/if}
             </div>
         </div>
@@ -597,13 +628,13 @@ function updateQuery() {
     }
 
     .scale {
-        width: 100%;
-        max-width: 200px;
-        transition: max-width 250ms ease;
+        width: 200px;
+        max-width: 90%;
+        transition: width 250ms ease;
     }
 
     .scale:focus {
-        max-width: 400px;
+        width: 400px;
     }
 
     .difficulty {

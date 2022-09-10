@@ -42,3 +42,41 @@
 .flex-wrap {
     flex-wrap: wrap;
 }
+
+.mobile-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.force-cc {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 500px) {
+    
+    .mobile-center {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .mobile-column {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .mobile-center-column {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+}

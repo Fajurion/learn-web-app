@@ -1,18 +1,43 @@
 .center-form {
-    z-index: 1;
     position: absolute;
-    top: 0;
-    left: 0;
+    z-index: 1;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    gap: 0.5em;
-    width: 100%;
-    height: 100%;
+    transition: 250ms ease;
 }
 
 .form {
+    border-radius: 1em;
+    padding: 0.5em 1.1em;
+    background-color: var(--box-color);
+    width: 1000px;
+    max-width: 100%;
+    transition: 250ms ease;
+    opacity: 1;
+    color: var(--text-color);
+    max-height: 100vh;
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.form::-webkit-scrollbar {
+    display: none;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.asddsadsasdsaform {
     display: flex;
     justify-content: center;
     padding: 2em;
@@ -22,33 +47,14 @@
     width: 1000px;
     max-width: 85%;
     gap: 0.5em;
-    overflow-y: scroll;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-
-    button {
-        text-decoration: none;
-        outline: none;
-        border: none;
-        font-size: 18px;
-        padding: 0.5em 1em;
-        border-radius: 0.3em;
-        background-color: var(--menu-color);
-        color: var(--text-color); 
-        transition: 250ms ease;
-        cursor: pointer;
-
-        &:hover {
-            background-color: var(--hover-color);
-        }
-    }
+    overflow: visible;
 }
 
 .small-form {
     width: 500px;
 }
 
-.form::-webkit-scrollbar {
+.center-form::-webkit-scrollbar {
     display: none;
 }
 

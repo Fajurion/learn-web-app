@@ -1,0 +1,32 @@
+@media only screen and (max-width: 600px) {
+
+    .hiddenl-600 {
+        display: none !important;
+    }
+
+}
+
+@media only screen and (min-width: 600px) {
+
+    .hiddenb-600 {
+        display: none !important;
+    }
+
+}
+
+
+@media only screen and (max-width: 400px) {
+
+    .hiddenl-400 {
+        display: none !important;
+    }
+
+}
+
+@media only screen and (min-width: 400px) {
+
+    .hiddenb-400 {
+        display: none !important;
+    }
+
+}

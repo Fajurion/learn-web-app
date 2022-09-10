@@ -32,10 +32,13 @@ import ReportMenu from "$lib/account/menus/reportMenu.svelte";
 import { selectionType } from "$lib/components/selector/selectorStore";
 import TopicSelector from "$lib/components/selector/topicSelector.svelte";
 import ImageDrop from "$lib/components/selector/imageDrop.svelte";
+import { settingType } from "$lib/account/account";
+import ChangePassword from "$lib/account/settings/changePassword.svelte";
 
     page.subscribe(() => {
         sidebarOpen.set(false)
     })
+
 </script>
 
 
@@ -69,6 +72,11 @@ import ImageDrop from "$lib/components/selector/imageDrop.svelte";
         <ImageDrop />
         {:else if $selectionType === 'topic'}
         <TopicSelector />
+        {/if}
+
+        {:else if $formTitle === 'Ändern'}
+        {#if $settingType === 'pw'}
+        <ChangePassword />
         {/if}
 
         {/if}

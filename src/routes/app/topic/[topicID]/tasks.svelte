@@ -8,9 +8,11 @@ import { createTask, listTasks, resetTasks, taskArray, taskFilterSorting, taskFi
 import { page } from "$app/stores";
 import "$lib/styles/components.scss"
 import "$lib/styles/tooltip.scss"
+import "$lib/styles/form.scss"
 import "$lib/styles/align.scss"
 import { requesting, requestURL } from '$lib/configuration';
 import { goto } from "$app/navigation";
+import NotFound from "$lib/render/notFound.svelte";
 
     let difficulty = 0
     let answers: string[] = ['Antwort 1']
@@ -55,61 +57,63 @@ import { goto } from "$app/navigation";
 {#if $addForm}
 <div in:scale out:scale class="center-form">
     <div class="form">
-        <div class="difficulty">
-            <p>Titel erstellen</p>
-            <p style="color: {title.length > 3 && title.length < 50 ? 'white' : 'red'};">{title.length + ' / 50'}</p>
-        </div>
-        <input bind:value={title} type="title" placeholder="Titel">
+        <div class="content">
+            <div class="difficulty">
+                <p>Titel erstellen</p>
+                <p style="color: {title.length > 3 && title.length < 50 ? 'white' : 'red'};">{title.length + ' / 50'}</p>
+            </div>
+            <input bind:value={title} type="title" placeholder="Titel">
 
-        <p style="margin-top: 10px;">Schwierigkeit auswählen</p>
-        <div class="difficulty">
-            <p class="diff-selector" on:click={() => difficulty = 0}
-                 style="background-color: {difficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
-            <p class="diff-selector" on:click={() => difficulty = 1}
-                 style="background-color: {difficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
-            <p class="diff-selector" on:click={() => difficulty = 2}
-                 style="background-color: {difficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
-        </div>
-
-        <div style="margin-top: 10px;" class="difficulty">
-            <p>Aufgabenstellung erstellen</p>
-            <p style="color: {task.length > 3 && task.length < 200 ? 'white' : 'red'};">{task.length + ' / 200'}</p>
-        </div>
-        <Textarea bind:value={task} placeholder="Aufgabe"/>
-
-        <p style="margin-top: 10px;">Antwortmöglichkeiten erstellen</p>
-        <div class="answers">
-            {#each answers as answer}
-
-            <div class="answer">
-                <input bind:value={answer}>
-                <span class="material-icons clickable" on:click={() => removeAnswer(answer)}>delete</span>
-                <span class="material-icons clickable" on:click={() => correct = answer}>done_all</span>
+            <p style="margin-top: 10px;">Schwierigkeit auswählen</p>
+            <div class="difficulty">
+                <p class="diff-selector" on:click={() => difficulty = 0}
+                    style="background-color: {difficulty == 0 ? 'green' : 'var(--hover-color)'};">EINFACH</p>
+                <p class="diff-selector" on:click={() => difficulty = 1}
+                    style="background-color: {difficulty == 1 ? 'orange' : 'var(--hover-color)'};">MITTEL</p>
+                <p class="diff-selector" on:click={() => difficulty = 2}
+                    style="background-color: {difficulty == 2 ? 'red' : 'var(--hover-color)'};">SCHWER</p>
             </div>
 
-            {/each}
-            <span class="material-icons clickable" on:click={addAnswer}>add</span>
-            <input bind:value={correct} placeholder="Richtige Antwort">
-        </div>
+            <div style="margin-top: 10px;" class="difficulty">
+                <p>Aufgabenstellung erstellen</p>
+                <p style="color: {task.length > 3 && task.length < 200 ? 'white' : 'red'};">{task.length + ' / 200'}</p>
+            </div>
+            <Textarea id="vater" bind:value={task} placeholder="Aufgabe"/>
 
-        <div style="margin-top: 10px;" class="difficulty">
-            <p>Erklärung erstellen</p>
-            <p style="color: {explanation.length > 3 && explanation.length < 512 ? 'white' : 'red'};">{explanation.length + ' / 512'}</p>
-        </div>
-        <Textarea bind:value={explanation} placeholder="Erklärung"/>
+            <p style="margin-top: 10px;">Antwortmöglichkeiten erstellen</p>
+            <div class="answers">
+                {#each answers as answer}
 
-        <div class="row">
-            <button on:click={taskCreation} style="margin-top: 20px;">Erstellen</button>
-            <button on:click={() => addForm.set(false)}>Zurück</button>
+                <div class="answer">
+                    <input bind:value={answer}>
+                    <span class="material-icons clickable" on:click={() => removeAnswer(answer)}>delete</span>
+                    <span class="material-icons clickable" on:click={() => correct = answer}>done_all</span>
+                </div>
+
+                {/each}
+                <span class="material-icons clickable" on:click={addAnswer}>add</span>
+                <input bind:value={correct} placeholder="Richtige Antwort">
+            </div>
+
+            <div style="margin-top: 10px;" class="difficulty">
+                <p>Erklärung erstellen</p>
+                <p style="color: {explanation.length > 3 && explanation.length < 512 ? 'white' : 'red'};">{explanation.length + ' / 512'}</p>
+            </div>
+            <Textarea id="mutter" bind:value={explanation} placeholder="Erklärung"/>
+
+            <div class="row">
+                <button on:click={taskCreation} style="margin-top: 20px;">Erstellen</button>
+                <button on:click={() => addForm.set(false)}>Zurück</button>
+            </div>
         </div>
     </div>
 </div>
 {/if}
 
-<div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
+<div class="panel">
 
     <div class="container" style="margin-top: 0.4em;">
-        <div class="row">
+        <div class="row flex-wrap mobile-center-column">
             <input bind:value={$taskSearchQuery} on:input={() => updateFilter($taskSearchQuery, $taskFilterDifficulty, $taskFilterSorting)}
              placeholder="Aufgaben suchen" class="scale">
 
@@ -138,10 +142,10 @@ import { goto } from "$app/navigation";
         <div class="vertical">
 
             {#if !$taskArray[0] && !$requesting}
-            <div in:fly class="cc cc-space">
-                <h2>Keine Aufgaben gefunden!</h2>
+            <div in:fly class="cc cc-space column">
+                <NotFound margin="0em" text="Keine Aufgaben gefunden!" />
                 <div class="toolbar">
-                    <span on:click={loadTasks} class="material-icons">refresh</span>
+                    <span on:click={() => updateFilter($taskSearchQuery, $taskFilterDifficulty, $taskFilterSorting)} class="material-icons">refresh</span>
                     <span on:click={() => addForm.set(true)} class="material-icons">add</span>
                 </div>
             </div>
@@ -198,41 +202,7 @@ import { goto } from "$app/navigation";
         display: none;
     }
 
-    .center-form {
-        z-index: 1;
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 0.5em;
-        width: 100%;
-        height: 100%;
-    }
-
-    .form {
-        display: flex;
-        justify-content: center;
-        padding: 2em;
-        border-radius: 1em;
-        background-color: var(--box-color);
-        flex-direction: column;
-        width: 1000px;
-        max-width: 85%;
-        gap: 0.5em;
-        overflow-y: scroll;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-
-    .form::-webkit-scrollbar {
-        display: none;
-    }
-
     input {
-        overflow: hidden;
         resize: none;
         outline: none;
         border: none;
@@ -356,13 +326,13 @@ import { goto } from "$app/navigation";
     }
 
     .scale {
-        width: 100%;
-        max-width: 200px;
-        transition: max-width 250ms ease;
+        width: 200px;
+        max-width: 90%;
+        transition: width 250ms ease;
     }
 
     .scale:focus {
-        max-width: 400px;
+        width: 400px;
     }
 
     .toolbar {

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { goto } from "$app/navigation";
+import { logOut } from "$lib/account/account";
 import { permissions } from "$lib/configuration";
 import { menuOpen } from "$lib/nav/menuStore";
 
@@ -23,6 +24,8 @@ import { menuOpen } from "$lib/nav/menuStore";
         <div class="buttons">
             <h2 on:click={() => closeMenu('/app/groups/')}><span style="font-size: 30px;" class="material-icons">group</span>Gruppen</h2>
             <h2 on:click={() => closeMenu('/app/exams/')}><span style="font-size: 30px;" class="material-icons">menu_book</span>Klassenarbeiten</h2>
+            <h2 on:click={() => closeMenu('/app/about/impressum/')}><span style="font-size: 30px;" class="material-icons">domain</span>Impressum</h2>
+            <h2 on:click={() => closeMenu('/app/about/privacy/')}><span style="font-size: 30px;" class="material-icons">lock</span>Datenschutz</h2>
             {#if $permissions.includes('view.admin.panel')}
             <h2 on:click={() => closeMenu('/app/admin/')}><span style="font-size: 30px;" class="material-icons">shield</span>Admin Panel</h2>
             {/if}
@@ -30,8 +33,8 @@ import { menuOpen } from "$lib/nav/menuStore";
 
         <!-- Buttons in the bottom left -->
         <div class="across">
-            <h3 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">insights</span>Meine Daten</h3>
-            <h3 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">logout</span>Ausloggen</h3>
+            <!-- <h3 on:click={() => closeMenu('/app/guides/')}><span style="font-size: 25px;" class="material-icons">insights</span>Meine Daten</h3> -->
+            <h3 on:click={() => logOut()}><span style="font-size: 25px;" class="material-icons">logout</span>Ausloggen</h3>
         </div>
 
     </div>

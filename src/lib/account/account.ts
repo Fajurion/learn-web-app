@@ -3,7 +3,9 @@ import { writable } from "svelte/store";
 
 export const accountData = writable<any>({})
 export const groupList = writable<any[]>([])
-export const testList = writable<any[]>([])
+export const examList = writable<any[]>([])
+
+export let settingType = writable<string>('')
 
 export function refreshAccount() {
     postRequest('/api/start', {
@@ -13,9 +15,10 @@ export function refreshAccount() {
 
         accountData.set(json.account)
 
-        json.groups.sort(function(a,b){return a.id - b.id})
+        json.groups.sort((a: any, b: any) => {return a.id - b.id})
         groupList.set(json.groups)
         permissions.set(json.permissions)
+        examList.set(json.tests)
     })
 }
 

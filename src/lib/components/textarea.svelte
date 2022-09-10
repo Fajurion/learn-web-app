@@ -1,6 +1,9 @@
 <script>
 import { onMount } from "svelte";
 
+    // Id of the area
+    export let id = 'textarea'
+
     // Variable for the text of the textarea
 	export let value = '';
 
@@ -12,14 +15,16 @@ import { onMount } from "svelte";
 
     // Expand on startup
     onMount(() => {
-        expand()
+        setTimeout(() => {
+            expand()            
+        }, 300);
     })
 
     // Expand textarea on every input
     function expand() {
 
         // Get textarea
-        const txt = document.querySelector('#textarea')
+        const txt = document.querySelector('#' + id)
 
         // Set height to the height of the text
         // @ts-ignore
@@ -30,12 +35,11 @@ import { onMount } from "svelte";
 </script>
 
 <!-- Text area -->
-<textarea class="{blocked ? 'blocked' : ''}" id="textarea" placeholder={placeholder} on:input={expand} bind:value />
+<textarea class="{blocked ? 'blocked' : ''}" id="{id}" placeholder={placeholder} on:input={expand} bind:value />
 
 <style>
 	
 	textarea {
-		overflow: hidden;
         resize: none;
         outline: none;
         border: none;
@@ -47,7 +51,7 @@ import { onMount } from "svelte";
         border: 2px solid var(--menu-color);
         color: var(--text-color);
         transition: border 250ms ease;
-	}
+    }
 
     .blocked {
         border: 2px solid red;

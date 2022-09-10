@@ -27,16 +27,17 @@ function gotoGroup(group: any) {
 
         <input bind:value={title} type="title" placeholder="Name">
 
-        <button on:click={addGroup} style="margin-top: 20px;">Erstellen</button>
-        <button on:click={() => addForm.set(false)}>Zurück</button>
+        <div class="row">
+            <button on:click={addGroup} style="margin-top: 20px;">Erstellen</button>
+            <button on:click={() => addForm.set(false)}>Zurück</button>
+        </div>
     </div>
 </div>
 {/if}
 
-<div in:fly={{x: 500, delay: 250, duration: 250}} out:fly={{duration: 250, x: -500}} class="panel">
+<div class="panel">
     
-    <div class="search">
-        <span on:click={() => goto('/app')} style="font-size: 30px;" class="material-icons clickable">arrow_back</span>
+    <div class="row">
         <input type="text" bind:value={$searchQuery} on:input={() => listGroups($searchQuery)} placeholder="Suchen..">
         <span on:click={() => addForm.set(true)} style="font-size: 30px;" class="material-icons clickable">add</span>
     </div>
@@ -119,27 +120,6 @@ function gotoGroup(group: any) {
 
         &:hover {
             background-color: var(--hover-color);
-        }
-    }
-
-    .search {
-        margin-top: 1em;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.3em;
-
-        input {
-            outline: none;
-            border: none;
-            width: 85%;
-            max-width: 400px;
-            font-size: 19px;
-            padding: 0.5em 0.6em;
-            border-radius: 0.3em;
-            background-color: var(--menu-color);
-            color: var(--text-color);
         }
     }
 
@@ -226,7 +206,6 @@ function gotoGroup(group: any) {
         align-items: center;
         flex-direction: column;
         gap: 0.6em;
-        padding: 0.3em;
     }
 
     .group {
@@ -259,6 +238,14 @@ function gotoGroup(group: any) {
         &:hover {
             background-color: var(--box-color);
         }
+    }
+
+    @media only screen and (max-width: 500px) {
+
+        .group {
+            width: 95%;
+        }
+
     }
 
 </style>

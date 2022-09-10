@@ -1,10 +1,12 @@
 <script lang="ts">
 import { addForm } from "$lib/posts/posts";
-import { currentTopic, topicList } from "$lib/sidebar/topics";
-import { slide } from "svelte/transition";
+import { currentTopic } from "$lib/sidebar/topics";
 import { page } from "$app/stores";
 import { goto } from "$app/navigation";
 import "$lib/styles/tooltip.scss"
+import "$lib/styles/mobile.scss"
+import "$lib/styles/align.scss"
+import { formOpen, formTitle } from "$lib/configuration";
 
 </script>
 
@@ -12,22 +14,35 @@ import "$lib/styles/tooltip.scss"
 {#if $currentTopic.name}
 
 <!-- Titlebar above post/task/my stuff section -->
-<div in:slide={{duration: 200, delay: 250}} out:slide={{duration: 200}} class="bar">
+<div class="bar cc-gap">
 
     <!-- Text with current topic -->
     <p><span class="material-icons">topic</span>{$currentTopic.name}</p>
 
     <!-- Selection of what to view -->
-    <div class="nav">
-        <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/created')} class="{($page.url.pathname.split('/')[4] || '') === 'created' ? 'selected' : ''}">Meine Sachen</p>
+    <div class="nav hiddenl-600">
+        <!-- <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/created')} class="{($page.url.pathname.split('/')[4] || '') === 'created' ? 'selected' : ''}">Meine Sachen</p> -->
         <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/')} class="{($page.url.pathname.split('/')[4] || '') === '' ? 'selected' : ''}">Beiträge</p>
         <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/tasks')} class="{($page.url.pathname.split('/')[4] || '') === 'tasks' ? 'selected' : ''}">Aufgaben</p>
     </div>
 
     <!-- Buttons on the right -->
     <div class="toolbar">
-        <span class="material-icons">info</span>
+        <span class="material-icons" on:click={() => {
+            formOpen.set(true)
+            formTitle.set('Melden')
+        }}>report</span>
+
         <span on:click={() => addForm.set(true)} class="material-icons">add</span>
+    </div>
+</div>
+
+<div class="bar hiddenb-600">
+    <!-- Selection of what to view -->
+    <div class="nav force-cc">
+        <!-- <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/created')} class="{($page.url.pathname.split('/')[4] || '') === 'created' ? 'selected' : ''}">Meine Sachen</p> -->
+        <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/')} class="{($page.url.pathname.split('/')[4] || '') === '' ? 'selected' : ''}">Beiträge</p>
+        <p on:click={() => goto('/app/topic/' + $currentTopic.id + '/tasks')} class="{($page.url.pathname.split('/')[4] || '') === 'tasks' ? 'selected' : ''}">Aufgaben</p>
     </div>
 </div>
 {/if}

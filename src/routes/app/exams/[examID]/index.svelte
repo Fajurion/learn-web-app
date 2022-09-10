@@ -5,7 +5,7 @@ import "$lib/styles/form.scss"
 import "$lib/styles/input.scss"
 
 import { currentExam } from "$lib/exams/exams"
-import { fly, scale } from "svelte/transition"
+import { scale } from "svelte/transition"
 import Textarea from "$lib/components/textarea.svelte"
 import SimpleTextRender from "$lib/render/simpleTextRender.svelte"
 import { formOpen, formTitle, getToken, postRequest, requesting } from "$lib/configuration";
@@ -61,7 +61,7 @@ function saveBoard() {
 
 {/if}
 
-<div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
+<div class="panel">
     
     <div style="margin-top: 1em;" class="container">
 

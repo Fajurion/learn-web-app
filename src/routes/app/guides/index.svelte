@@ -4,10 +4,12 @@ import { fly } from "svelte/transition";
 
 </script>
 
-<div out:fly={{x: -500, duration: 250}} in:fly={{x: 500, duration: 250, delay: 250}} class="panel">
+<div class="panel">
     <div class="center">
         <h1><span style="font-size: 50px;" class="material-icons">quiz</span>Erklärungen</h1>
     </div>
+    
+    <h2>Hier kommen bald Sachen!</h2>
 </div>
 
 <style lang="scss">

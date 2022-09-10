@@ -1,8 +1,8 @@
-<script lang="ts">
-import UnderConstruction from "$lib/render/underConstruction.svelte";
-import "$lib/styles/align.scss"
-</script>
+<script>
 
-<div style="margin-top: 3em;" class="cc">
+import UnderConstruction from "$lib/render/underConstruction.svelte";
+
+</script>
+<div style="margin-top: 4em;">
     <UnderConstruction />
 </div>

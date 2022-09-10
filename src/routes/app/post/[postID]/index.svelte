@@ -9,6 +9,7 @@ import Textarea from "$lib/components/textarea.svelte";
 import { likePost, unlikePost } from "$lib/posts/likes";
 import { formOpen, formTitle, permissions, requesting } from "$lib/configuration";
 import AdvancedTextRender from "$lib/render/advancedTextRender.svelte";
+import NotFound from "$lib/render/notFound.svelte";
 
     // Variable for value of comment in comment add form
     let comment = ''
@@ -70,25 +71,29 @@ import AdvancedTextRender from "$lib/render/advancedTextRender.svelte";
 <!-- Form for creating a comment -->
 <div in:scale out:scale class="center-form">
     <div class="form">
-        <div class="across">
-            <p>Kommentieren</p>
-            <p style="color: {comment.length < 500 ? 'white' : 'red'};">{comment.length + ' / 500'}</p>
+        <div class="content">
+            <div class="across">
+                <p>Kommentieren</p>
+                <p style="color: {comment.length < 500 ? 'white' : 'red'};">{comment.length + ' / 500'}</p>
+            </div>
+    
+            <Textarea bind:value={comment} placeholder="Kommentar"/>
+    
+            <div class="row">
+                <button on:click={createAction} style="margin-top: 20px;">Hinzufügen</button>
+                <button on:click={() => createComment.set(false)}>Zurück</button>
+            </div>
         </div>
-
-        <Textarea bind:value={comment} placeholder="Kommentar"/>
-
-        <button on:click={createAction} style="margin-top: 20px;">Hinzufügen</button>
-        <button on:click={() => createComment.set(false)}>Zurück</button>
     </div>
 </div>
 
 {/if}
 
-<div in:fly={{x: 600, duration: 200, delay: 250}} out:fly={{x: -600, duration: 200}} class="panel">
+<div class="panel">
 
     <!-- Check if there isn't any post -->
     {#if !$currentPost.content}
-    <h2>Beitrag nicht gefunden!</h2>
+    <NotFound />
     {/if}
 
     <!-- Check if post even exists -->
@@ -142,7 +147,7 @@ import AdvancedTextRender from "$lib/render/advancedTextRender.svelte";
         </div>
     
         {#each commentsArray as comment}
-        <div in:slide class="vertical">
+        <div class="vertical">
             <p class="darker">{comment.creatorName} am {comment.date}</p>
             <p>{comment.content}</p>
         </div>

@@ -3,9 +3,10 @@ import { page } from "$app/stores";
 
 import { currentGroup, retrieveGroup, requesting } from "$lib/groups/groups"
 import { editDescriptionForm, changeDescription, newDescription, changeJoinState } from "$lib/groups/overview";
-import { fly, scale } from "svelte/transition"
+import { scale } from "svelte/transition"
 import { onMount } from "svelte";
 import Textarea from "$lib/components/textarea.svelte";
+import "$lib/styles/align.scss"
 
 let confirmLeave = false
 let error = false
@@ -35,8 +36,10 @@ onMount(() => {
 
         <Textarea bind:value={$newDescription} placeholder="Text"/>
 
-        <button on:click={() => changeDescription($currentGroup.id, $newDescription)} style="margin-top: 20px;">Speichern</button>
-        <button on:click={() => editDescriptionForm.set(false)}>Zurück</button>
+        <div class="row">
+            <button on:click={() => changeDescription($currentGroup.id, $newDescription)} style="margin-top: 20px;">Speichern</button>
+            <button on:click={() => editDescriptionForm.set(false)}>Zurück</button>
+        </div>
     </div>
 </div>
 {/if}
@@ -47,7 +50,6 @@ onMount(() => {
         <p style="font-size: 23px;">Willst du diese Gruppe wirklich verlassen?</p>
 
         <div style="margin-top: 15px;" class="buttons">
-            <button on:click={() => confirmLeave = false}>Abbrechen</button>
             <button on:click={() => {
 
                 confirmLeave = false
@@ -58,12 +60,13 @@ onMount(() => {
                 $currentGroup.member = !$currentGroup.member
 
             }}>Verlassen</button>
+            <button on:click={() => confirmLeave = false}>Abbrechen</button>
         </div>
     </div>
 </div>
 {/if}
 
-<div in:fly={{x: 500, delay: 250, duration: 250}} out:fly={{duration: 250, x: -500}} class="panel">
+<div class="panel">
 
     {#if $requesting}
     <div class="center">
@@ -73,22 +76,28 @@ onMount(() => {
 
     {#if !error && !$requesting}
 
-    <div class="navbar">
-        <h1><span style="font-size: 40px;" class="material-icons">group</span>{$currentGroup.name}</h1>
+    <div class="navbar flex-wrap cc-space">
 
-        {#if $currentGroup.member}
-        <button on:click={() => confirmLeave = true}><span style="font-size: 23px;" class="material-icons">done_all</span>Beigetreten</button>
-        {:else}
-        <button on:click={() => {
-            
-            changeJoinState($currentGroup.id, false, () => {
+        <div class="mobile-column">
+            <h1><span style="font-size: 40px;" class="material-icons">group</span>{$currentGroup.name}</h1>
+            <p>{$currentGroup.memberCount} Mitglieder</p>
+        </div>
+
+        <div class="mobile-center">
+            {#if $currentGroup.member}
+            <button on:click={() => confirmLeave = true}><span style="font-size: 23px;" class="material-icons">done_all</span>Beigetreten</button>
+            {:else}
+            <button on:click={() => {
+                
+                changeJoinState($currentGroup.id, false, () => {
+                    $currentGroup.member = !$currentGroup.member
+                })
+                
                 $currentGroup.member = !$currentGroup.member
-            })
-            
-            $currentGroup.member = !$currentGroup.member
-
-        }}><span style="font-size: 23px;" class="material-icons">add</span>Beitreten</button>
-        {/if}
+    
+            }}><span style="font-size: 23px;" class="material-icons">add</span>Beitreten</button>
+            {/if}
+        </div>
     </div>
     
     <slot />

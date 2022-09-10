@@ -68,7 +68,7 @@ export let taskSearchQuery = writable('')
 export let taskFilterDifficulty = writable(-1)
 export let taskFilterSorting = writable(0)
 
-export let taskArray = writable([])
+export let taskArray = writable<any[]>([])
 export let taskOffset = writable(0)
 
 export function listTasks(currentArray: never[], currentOffset: number, searchQuery: string,

@@ -1,7 +1,9 @@
 <script>
+import { goto } from "$app/navigation";
+
 
 import { formOpen, formTitle, permissions } from "$lib/configuration";
-import { logOut } from "./account";
+import { logOut, settingType } from "./account";
 
 </script>
 <div class="settings">
@@ -11,7 +13,11 @@ import { logOut } from "./account";
     <div class="setting">
         <div class="title">
             <p><span class="material-icons">lock_reset</span>Passwort ändern</p>
-            <span class="material-icons clickable">edit</span>
+            <span class="material-icons clickable" on:click={() => {
+                formOpen.set(true)
+                settingType.set('pw')
+                formTitle.set('Ändern')
+            }}>edit</span>
         </div>
 
         <p class="hidden">Ändere dein Account Passwort.</p>
@@ -31,6 +37,7 @@ import { logOut } from "./account";
 
     <h4 class="heading">Account</h4>
 
+    <!--
     <div class="setting">
         <div class="title">
             <p><span class="material-icons">account_circle</span>Benutzername ändern</p>
@@ -38,17 +45,8 @@ import { logOut } from "./account";
         </div>
 
         <p class="hidden">Hier kannst du den Benutzername deines Accounts ändern.</p>
-    </div>
-
-    <div class="setting">
-        <div class="title">
-            <p><span class="material-icons">delete</span>Sitzungen löschen</p>
-            <span class="material-icons clickable">launch</span>
-        </div>
-
-        <p class="hidden">Hier kannst du alle Sitzungen löschen, um die Sicherheit deines Accounts zu garantieren.</p>
-    </div>
-
+    </div> -->
+ 
     <div class="setting">
         <div class="title">
             <p>Abmelden</p>
@@ -90,7 +88,10 @@ import { logOut } from "./account";
     <div class="setting">
         <div class="title">
             <p><span class="material-icons">dashboard</span>Zum Adminpanel</p>
-            <span class="material-icons clickable">launch</span>
+            <span on:click={() => {
+                goto('/app/admin/reports')
+                formOpen.set(false)
+            }} class="material-icons clickable">launch</span>
         </div>
 
         <p class="hidden">Im Adminpanel können erweiterte Einstellungen zur Plattform festgelegt werden.</p>
